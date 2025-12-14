@@ -1,0 +1,98 @@
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Peringatan Akreditasi</title>
+    </head>
+    <body style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;background:#f4f4f4;">
+        <table
+            align="center"
+            border="0"
+            cellpadding="0"
+            cellspacing="0"
+            width="600"
+            style="background:#ffffff;border-radius:8px;overflow:hidden;"
+        >
+            <!-- Logo -->
+            <tr>
+                <td align="center" bgcolor="#4b2e83" style="padding:20px 0;">
+                    <img src="{{logoUrl}}" alt="Logo" width="80" style="display:block;" />
+                </td>
+            </tr>
+
+            <!-- Header -->
+            <tr>
+                <td style="padding:20px;text-align:center;">
+                    <h2 style="margin:0;color:#333;">Halo, {{username}} 👋</h2>
+                </td>
+            </tr>
+
+            <!-- Content -->
+            <tr>
+                <td style="padding:0 30px 10px 30px;">
+                    <h3 style="color:#4b2e83;margin-bottom:10px;">
+                        Peringatan: Akreditasi Akan Berakhir
+                    </h3>
+
+                    <p style="color:#555;line-height:1.6;margin:0 0 16px 0;">
+                        Terdapat <strong>{{count}}</strong> akreditasi yang akan berakhir
+                        dalam 6 bulan ke depan.
+                    </p>
+                </td>
+            </tr>
+
+            <!-- Accreditation List -->
+            <tr>
+                <td style="padding:0 30px 20px 30px;">
+                    <table
+                        width="100%"
+                        border="0"
+                        cellspacing="0"
+                        cellpadding="8"
+                        style="border-collapse:collapse;font-size:14px;"
+                    >
+                        <thead>
+                            <tr style="background:#4b2e83;color:#fff;text-align:left;">
+                                <th>Kode</th>
+                                <th>Nama</th>
+                                <th>Program Studi</th>
+                                <th>Kadaluarsa</th>
+                                <th>Sisa Hari</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each accreditations}}
+                            <tr style="border-bottom:1px solid #ddd;">
+                                <td>{{code}}</td>
+                                <td>{{name}}</td>
+                                <td>{{major}}</td>
+                                <td>{{expired_on}}</td>
+                                <td>{{daysUntilExpiry}} hari</td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+
+            <!-- Button -->
+            <tr>
+                <td align="center" style="padding:20px;">
+                    <a
+                        href="{{dashboardLink}}"
+                        target="_blank"
+                        style="background:#4b2e83;color:#fff;text-decoration:none;padding:12px 24px;border-radius:4px;display:inline-block;font-weight:bold;"
+                    >
+                        Lihat Dashboard
+                    </a>
+                </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+                <td bgcolor="#f4f4f4" style="padding:15px;text-align:center;font-size:12px;color:#777;">
+                    © {{year}} Universitas Gunadarma. All rights reserved.
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>

@@ -1,0 +1,60 @@
+<style>
+    .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='black' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+    }
+</style>
+<nav class="navbar navbar-expand-lg navbar-dark bg-light sticky-top shadow-sm">
+    <div class="container">
+        <!-- Brand -->
+        <a class="navbar-brand d-flex align-items-center fw-bold" href="/">
+            <img src="/asset/UGGlobal.png" alt="Logo Gunadarma" style="height: 40px" />
+        </a>
+
+        <!-- Toggler -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Menu -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Beranda</a>
+                </li>
+                <li class="nav-item">
+                   <a class="nav-link" href="/akreditasi">Akreditasi</a>
+                </li>
+
+                <% if (isAuthenticated) { %>
+                <!-- Jika login -->
+                <li class="nav-item dropdown ms-lg-3">
+                    <a
+                        class="btn btn-light text-primary fw-semibold px-3 dropdown-toggle"
+                        href="#"
+                        data-bs-toggle="dropdown"
+                    >
+                        <i class="fas fa-user me-1"></i> <%= user.username %>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" href="/dashboard"><i class="fas fa-cogs me-2"></i> Admin</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="/api/logout"
+                                ><i class="fas fa-sign-out-alt me-2"></i> Logout</a
+                            >
+                        </li>
+                    </ul>
+                </li>
+                <% } else { %>
+                <!-- Jika belum login -->
+                <li class="nav-item ms-lg-3">
+                    <a href="/login" class="btn btn-light text-primary fw-semibold px-3">
+                        <i class="fas fa-sign-in-alt me-1"></i> Login
+                    </a>
+                </li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,356 @@
+<style>
+    .table-responsive {
+        overflow-x: auto;
+    }
+</style>
+<div id="majors" class="content-section active">
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h2><i class="fas fa-user-graduate me-2"></i>Manajemen Program Studi</h2>
+            <p class="text-muted mb-0">Kelola data program studi</p>
+        </div>
+        <button class="btn btn-primary" onclick="showMajorModal()">
+            <i class="fas fa-plus me-2"></i>Tambah Program Studi
+        </button>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Daftar Program Studi</h5>
+        </div>
+        <div class="card-body">
+            <div id="errorMessage" class="alert alert-danger d-none"></div>
+            <div id="successMessage" class="alert alert-success d-none"></div>
+            <div class="table-responsive">
+            <table class="table table-striped table-hover" id="majorsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nama Program Studi</th>
+                        <th>Kode</th>
+                        <th>Jenjang</th>
+                        <th>Fakultas</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Major -->
+<div class="modal fade" id="majorModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="majorForm" onsubmit="event.preventDefault(); saveMajor();">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="majorModalTitle">Tambah Program Studi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="majorId" />
+                    <div id="errorMessageModal" class="alert alert-danger d-none"></div>
+                    <div class="mb-3">
+                        <label for="majorName" class="form-label">Nama Program Studi</label>
+                        <input type="text" class="form-control" id="majorName" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="majorCode" class="form-label">Kode</label>
+                        <input type="text" class="form-control" id="majorCode" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="majorLevel" class="form-label">Jenjang</label>
+                        <select class="form-select" id="majorLevel" required>
+                            <option value="">Pilih Jenjang</option>
+                            <option value="D3">D3</option>
+                            <option value="Profesi">Profesi</option>
+                            <option value="S1">S1</option>
+                            <option value="S2">S2</option>
+                            <option value="S3">S3</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="majorFaculty" class="form-label">Fakultas</label>
+                        <select class="form-select" id="majorFaculty" required></select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="majorActive" class="form-label">Status</label>
+                        <select class="form-select" id="majorActive" required>
+                            <option value="">Pilih Status</option>
+                            <option value="aktif">Aktif</option>
+                            <option value="nonaktif">Non-aktif</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Jquery CDN -->
+<script
+ src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+ integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+ crossorigin="anonymous"
+ referrerpolicy="no-referrer"></script>
+<!-- DataTables CSS -->
+<link
+ rel="stylesheet"
+ href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+
+<script>
+    let majors = [];
+    let dataTable;
+
+    function renderDataTable() {
+        // Destroy existing DataTable if it exists
+        if (dataTable) {
+            dataTable.destroy();
+        }
+
+        // Initialize DataTable
+        dataTable = $("#majorsTable").DataTable({
+            data: majors,
+            columns: [
+                { data: "id" },
+                { data: "name" },
+                {
+                    data: "code",
+                    render: function (data) {
+                        return `<span class="badge bg-secondary">${data}</span>`;
+                    },
+                },
+                {
+                    data: "level",
+                    render: function (data) {
+                        return data || "-";
+                    },
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return row.faculty?.name || "-";
+                    },
+                },
+                {
+                    data: "active",
+                    render: function (data) {
+                        return `<span class="badge bg-${data ? "success" : "danger"}">
+                            ${data ? "Aktif" : "Non-Aktif"}
+                        </span>`;
+                    },
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return `
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editMajor(${row.id})" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteMajor(${row.id})" title="Hapus">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        `;
+                    },
+                    orderable: false,
+                },
+            ],
+            order: [[0, "desc"]], // Sort by ID descending
+            pageLength: 10,
+            lengthMenu: [
+                [5, 10, 25, 50, -1],
+                [5, 10, 25, 50, "Semua"],
+            ],
+            language: {
+                lengthMenu: "Tampilkan _MENU_ data per halaman",
+                zeroRecords: "Data tidak ditemukan",
+                info: "Menampilkan halaman _PAGE_ dari _PAGES_",
+                infoEmpty: "Tidak ada data tersedia",
+                infoFiltered: "(difilter dari _MAX_ total data)",
+                search: "Cari:",
+                paginate: {
+                    first: "Pertama",
+                    last: "Terakhir",
+                    next: "Selanjutnya",
+                    previous: "Sebelumnya",
+                },
+            },
+            responsive: true,
+            autoWidth: false,
+        });
+    }
+
+    async function loadMajors() {
+        majors = await fetchMajors();
+        renderDataTable();
+    }
+
+    async function fetchMajors() {
+        try {
+            const response = await fetch("/api/majors");
+            if (!response.ok) throw new Error("Network response was not ok");
+            return await response.json();
+        } catch (error) {
+            console.error("Error fetching majors:", error);
+            return [];
+        }
+    }
+
+    async function fetchFaculties() {
+        try {
+            const response = await fetch("/api/faculties");
+            if (!response.ok) throw new Error("Network response was not ok");
+            return await response.json();
+        } catch (error) {
+            console.error("Error fetching faculties:", error);
+            return [];
+        }
+    }
+
+    async function loadFaculties() {
+        const faculties = await fetchFaculties();
+        const facultiesSelect = document.getElementById("majorFaculty");
+        facultiesSelect.innerHTML = '<option value="">Pilih Fakultas</option>';
+        faculties.forEach((faculty) => {
+            const option = document.createElement("option");
+            option.value = faculty.id;
+            option.textContent = faculty.name;
+            facultiesSelect.appendChild(option);
+        });
+    }
+
+    function showMajorModal(majorId = null) {
+        const modal = new bootstrap.Modal(document.getElementById("majorModal"));
+        const title = document.getElementById("majorModalTitle");
+        const form = document.getElementById("majorForm");
+        document.getElementById("errorMessageModal").classList.add("d-none");
+
+        if (majorId) {
+            const major = majors.find((m) => m.id === majorId);
+            title.textContent = "Edit Program Studi";
+            document.getElementById("majorId").value = major.id;
+            document.getElementById("majorName").value = major.name;
+            document.getElementById("majorCode").value = major.code;
+            document.getElementById("majorLevel").value = major.level || "";
+            document.getElementById("majorFaculty").value = major.faculty.id;
+            document.getElementById("majorActive").value = major.active ? "aktif" : "nonaktif";
+        } else {
+            title.textContent = "Tambah Program Studi";
+            form.reset();
+            document.getElementById("majorId").value = "";
+        }
+
+        modal.show();
+    }
+
+    function editMajor(majorId) {
+        showMajorModal(majorId);
+    }
+
+    async function saveMajor() {
+        const majorId = document.getElementById("majorId").value;
+        const majorData = {
+            name: document.getElementById("majorName").value.trim(),
+            code: document.getElementById("majorCode").value.trim(),
+            level: document.getElementById("majorLevel").value.trim(),
+            faculty_id: document.getElementById("majorFaculty").value,
+            active: document.getElementById("majorActive").value,
+        };
+
+        const invalidFields = Object.entries(majorData).filter(([key, value]) => !value);
+        if (invalidFields.length > 0) {
+            const errorMessage = document.getElementById("errorMessageModal");
+            errorMessage.textContent = `Field ${invalidFields
+                .map(([key]) => key.replace("_", " "))
+                .join(", ")} wajib diisi.`;
+            errorMessage.classList.remove("d-none");
+            return;
+        }
+
+        majorData.active = majorData.active === "aktif" ? true : false;
+
+        try {
+            const url = majorId ? `/api/majors/${majorId}` : "/api/majors";
+            const method = majorId ? "PUT" : "POST";
+
+            const response = await fetch(url, {
+                method: method,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(majorData),
+            });
+
+            const json = await response.json();
+
+            if (response.ok) {
+                const successMessage = document.getElementById("successMessage");
+                successMessage.textContent = majorId
+                    ? "Program Studi berhasil diperbarui."
+                    : "Program Studi berhasil ditambahkan.";
+                successMessage.classList.remove("d-none");
+                setTimeout(() => successMessage.classList.add("d-none"), 5000);
+
+                bootstrap.Modal.getInstance(document.getElementById("majorModal")).hide();
+                loadMajors();
+            } else {
+                const errorMessage = document.getElementById("errorMessageModal");
+                errorMessage.textContent = json.message || "Terjadi kesalahan saat menyimpan program studi.";
+                errorMessage.classList.remove("d-none");
+            }
+        } catch (error) {
+            console.error("Error saving major:", error);
+            const errorMessage = document.getElementById("errorMessageModal");
+            errorMessage.textContent = "Terjadi kesalahan saat menyimpan program studi.";
+            errorMessage.classList.remove("d-none");
+        }
+    }
+
+    async function deleteMajor(majorId) {
+        const confirmDelete = confirm("Apakah Anda yakin ingin menghapus program studi ini?");
+        if (!confirmDelete) return;
+
+        try {
+            const response = await fetch(`/api/majors/${majorId}`, {
+                method: "DELETE",
+            });
+
+            if (response.ok) {
+                const successMessage = document.getElementById("successMessage");
+                successMessage.textContent = "Program Studi berhasil dihapus.";
+                successMessage.classList.remove("d-none");
+                setTimeout(() => successMessage.classList.add("d-none"), 5000);
+            } else {
+                const json = await response.json();
+                const errorMessage = document.getElementById("errorMessage");
+                errorMessage.textContent = json.message || "Terjadi kesalahan saat menghapus program studi.";
+                errorMessage.classList.remove("d-none");
+                setTimeout(() => errorMessage.classList.add("d-none"), 5000);
+            }
+
+            loadMajors();
+        } catch (error) {
+            console.error("Error deleting major:", error);
+            const errorMessage = document.getElementById("errorMessage");
+            errorMessage.textContent = "Terjadi kesalahan saat menghapus Program Studi.";
+            errorMessage.classList.remove("d-none");
+            setTimeout(() => errorMessage.classList.add("d-none"), 5000);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        loadMajors();
+        loadFaculties();
+    });
+</script>

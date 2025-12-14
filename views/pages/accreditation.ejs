@@ -1,0 +1,1207 @@
+<style>
+    .content-wrapper {
+        min-height: 100vh;
+        padding: 20px 0;
+    }
+
+    .table-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+
+    .table-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .table-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-bottom: none;
+    }
+
+    .table-header h5 {
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .table-body {
+        padding: 0;
+    }
+
+    .custom-table {
+        margin: 0;
+    }
+
+    .custom-table thead th {
+        background: #f8f9fa;
+        border: none;
+        font-weight: 600;
+        color: #495057;
+        padding: 15px;
+    }
+
+    .custom-table tbody td {
+        padding: 12px 15px;
+        border-color: #e9ecef;
+        vertical-align: middle;
+    }
+
+    .badge-rank {
+        font-size: 0.75rem;
+        padding: 6px 12px;
+        border-radius: 20px;
+    }
+
+    .badge-unggul {
+        background: #28a745;
+    }
+    .badge-baik-sekali {
+        background: #ffc107;
+        color: #212529;
+    }
+    .badge-baik {
+        background: #dc3545;
+    }
+    .badge-expired {
+        background: #6c757d;
+    }
+
+    .status-badge {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+    }
+
+    .expired-soon {
+        color: #dc3545;
+        font-weight: bold;
+    }
+    .active-status {
+        color: #28a745;
+        font-weight: bold;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #667eea;
+    }
+
+    .stat-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-top: 5px;
+    }
+
+    .faculty-accordion .accordion-item {
+        border: none;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .faculty-accordion .accordion-header button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        font-weight: 600;
+    }
+
+    .faculty-accordion .accordion-header button:not(.collapsed) {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    }
+
+    .faculty-summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .year-summary-table {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .year-header {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        text-align: center;
+        padding: 15px;
+        font-weight: bold;
+    }
+
+    .loading-spinner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 200px;
+    }
+
+    .btn-export {
+        background: linear-gradient(45deg, #28a745, #20c997);
+        border: none;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-export:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+        color: white;
+    }
+
+    /* Filter Section Styles */
+    .filter-section {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        padding: 20px;
+    }
+
+    .filter-section .form-select {
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .filter-section .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .btn-filter {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-filter:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    .btn-reset {
+        background: #6c757d;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-reset:hover {
+        background: #5a6268;
+        color: white;
+    }
+
+    /* Pagination Styles */
+    .pagination-wrapper {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        padding: 20px;
+        background: #f8f9fa;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .pagination-info {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .pagination .page-link {
+        color: #667eea;
+        border: none;
+        padding: 8px 12px;
+        margin: 0 2px;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
+
+    .pagination .page-link:hover {
+        background: #667eea;
+        color: white;
+    }
+
+    .pagination .page-item.active .page-link {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+    }
+
+    @media (max-width: 768px) {
+        .table-responsive {
+            font-size: 0.85rem;
+        }
+
+        .faculty-summary {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .filter-section .row {
+            row-gap: 15px;
+        }
+
+        .pagination-wrapper {
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+        }
+    }
+</style>
+<div class="content-wrapper">
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div
+                class="col-auto mx-auto"
+                style="padding: 10px; width: fit-content; background: white; border-radius: 5px"
+            >
+                <h2 class="text-center mb-0" style="color: black; font-weight: 700">
+                    <i class="fas fa-certificate me-3"></i>
+                    Akreditasi Program Studi
+                </h2>
+            </div>
+        </div>
+
+        <!-- Statistik Umum -->
+        <div id="statistikUmum" class="stats-grid">
+            <div class="loading-spinner">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW: Filtered Data Table -->
+        <div class="table-card">
+            <div class="table-header">
+                <h5><i class="fas fa-filter me-2"></i>Data Akreditasi dengan Filter</h5>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <form id="filterForm">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label for="filterFakultas" class="form-label">Fakultas</label>
+                            <select class="form-select" id="filterFakultas" name="fakultas">
+                                <option value="all">Semua Fakultas</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="filterLevel" class="form-label">Jenjang</label>
+                            <select class="form-select" id="filterLevel" name="level">
+                                <option value="all">Semua Jenjang</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="filterInstitution" class="form-label">Tipe Lembaga</label>
+                            <select class="form-select" id="filterInstitution" name="institution_type">
+                                <option value="all">Semua Tipe</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="filterRank" class="form-label">Peringkat</label>
+                            <select class="form-select" id="filterRank" name="rank">
+                                <option value="all">Semua Peringkat</option>
+                            </select>
+                        </div>
+                        <div class="col-md-1">
+                            <label for="filterLimit" class="form-label">Per Halaman</label>
+                            <select class="form-select" id="filterLimit" name="limit">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-filter">
+                                    <i class="fas fa-search"></i> Filter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-reset" id="resetFilters">
+                                <i class="fas fa-undo"></i> Reset Filter
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Table -->
+            <div class="table-body">
+                <div class="table-responsive">
+                    <table class="table custom-table table-hover">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Program Studi</th>
+                                <th>Jenjang</th>
+                                <th>Fakultas</th>
+                                <th>Peringkat</th>
+                                <th>Tanggal Berlaku</th>
+                                <th>Tanggal Berakhir</th>
+                                <th>Lembaga</th>
+                                <th>Tipe</th>
+                                <th>Dokumen</th>
+                            </tr>
+                        </thead>
+                        <tbody id="filteredTableBody">
+                            <tr>
+                                <td colspan="9" class="text-center">
+                                    <div class="loading-spinner">
+                                        <div class="spinner-border text-primary" role="status"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination-wrapper">
+                    <div class="pagination-info" id="paginationInfo">Memuat data...</div>
+                    <nav aria-label="Table pagination">
+                        <ul class="pagination mb-0" id="paginationNav">
+                            <!-- Pagination will be generated here -->
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- 1. Program Studi yang akan Reakreditasi dan Belum Akreditasi -->
+        <div class="table-card">
+            <div class="table-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5>
+                        <i class="fas fa-exclamation-triangle me-2"></i>Program Studi yang akan Reakreditasi & Belum
+                        Akreditasi
+                    </h5>
+                </div>
+            </div>
+            <div class="table-body">
+                <div class="table-responsive">
+                    <table id="tableReakreditasiBelum" class="table custom-table table-hover">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Program Studi</th>
+                                <th>Jenjang</th>
+                                <th>Fakultas</th>
+                                <th>Status Akreditasi</th>
+                                <th>Tanggal Berakhir</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyReakreditasiBelum">
+                            <tr>
+                                <td colspan="8" class="text-center">
+                                    <div class="loading-spinner">
+                                        <div class="spinner-border text-primary" role="status"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Program Studi yang akan Reakreditasi Akreditasi Nasional -->
+        <div class="table-card">
+            <div class="table-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5><i class="fas fa-flag me-2"></i>Reakreditasi Akreditasi Nasional (12 Bulan ke Depan)</h5>
+                </div>
+            </div>
+            <div class="table-body">
+                <div class="table-responsive">
+                    <table id="tableReakreditasiNasional" class="table custom-table table-hover">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Program Studi</th>
+                                <th>Jenjang</th>
+                                <th>Fakultas</th>
+                                <th>Peringkat</th>
+                                <th>Tanggal Berlaku</th>
+                                <th>Tanggal Berakhir</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyReakreditasiNasional">
+                            <tr>
+                                <td colspan="8" class="text-center">
+                                    <div class="loading-spinner">
+                                        <div class="spinner-border text-primary" role="status"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Program Studi yang akan Reakreditasi Akreditasi Internasional -->
+        <div class="table-card">
+            <div class="table-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5><i class="fas fa-globe me-2"></i>Reakreditasi Akreditasi Internasional (12 Bulan ke Depan)</h5>
+                </div>
+            </div>
+            <div class="table-body">
+                <div class="table-responsive">
+                    <table id="tableReakreditasiInternasional" class="table custom-table table-hover">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Program Studi</th>
+                                <th>Jenjang</th>
+                                <th>Fakultas</th>
+                                <th>Peringkat</th>
+                                <th>Tanggal Berlaku</th>
+                                <th>Tanggal Berakhir</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyReakreditasiInternasional">
+                            <tr>
+                                <td colspan="8" class="text-center">
+                                    <div class="loading-spinner">
+                                        <div class="spinner-border text-primary" role="status"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Akreditasi Nasional Berakhir per Tahun -->
+        <div class="table-card">
+            <div class="table-header">
+                <h5>
+                    <i class="fas fa-calendar-times me-2"></i>Akreditasi Nasional Berakhir per Tahun (4 Tahun ke Depan)
+                </h5>
+            </div>
+            <div class="table-body p-3">
+                <div id="yearlyExpirationSummary" class="row g-3">
+                    <div class="col-12 text-center">
+                        <div class="loading-spinner">
+                            <div class="spinner-border text-primary" role="status"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Detail per Fakultas -->
+        <div class="table-card">
+            <div class="table-header">
+                <h5><i class="fas fa-building me-2"></i>Detail Akreditasi per Fakultas</h5>
+            </div>
+            <div class="table-body p-3">
+                <div id="facultyDetails" class="accordion faculty-accordion">
+                    <div class="text-center">
+                        <div class="loading-spinner">
+                            <div class="spinner-border text-primary" role="status"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal View Documents -->
+<div class="modal fade" id="documentsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Dokumen Akreditasi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="documentsListView">
+                    <!-- Documents list will be shown here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables.net/1.13.4/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-bs5/1.13.4/dataTables.bootstrap5.min.js"></script>
+
+<script>
+    // Global variables
+    let accreditations = [];
+    let tables = {};
+    let currentFilters = {
+        page: 1,
+        limit: 10,
+        fakultas: "all",
+        level: "all",
+        institution_type: "all",
+        rank: "all",
+    };
+
+    // async function loadAccreditations() {
+    //     accreditations = await fetchAccreditations();
+    //     renderDataTable();
+    // }
+
+    // Initialize page
+    $(document).ready(function () {
+        loadStatistikUmum();
+        loadFilterOptions();
+        loadFilteredData();
+        loadReakreditasiBelum();
+        loadReakreditasiNasional();
+        loadReakreditasiInternasional();
+        loadYearlyExpiration();
+        loadFacultyDetails();
+
+        // Setup event listeners
+        $("#filterForm").on("submit", function (e) {
+            e.preventDefault();
+            applyFilters();
+        });
+
+        $("#resetFilters").on("click", function () {
+            resetFilters();
+        });
+    });
+
+    // Load filter options
+    async function loadFilterOptions() {
+        try {
+            const response = await fetch("/api/akreditasi-data?type=filter_options");
+            const result = await response.json();
+
+            if (result.success) {
+                populateFilterOptions(result.data);
+            }
+        } catch (error) {
+            console.error("Error loading filter options:", error);
+        }
+    }
+
+    // Populate filter dropdowns
+    function populateFilterOptions(data) {
+        // Populate fakultas
+        const fakultasSelect = document.getElementById("filterFakultas");
+        fakultasSelect.innerHTML = '<option value="all">Semua Fakultas</option>';
+        data.faculties.forEach((faculty) => {
+            fakultasSelect.innerHTML += `<option value="${faculty.id}">${faculty.name}</option>`;
+        });
+
+        // Populate levels
+        const levelSelect = document.getElementById("filterLevel");
+        levelSelect.innerHTML = '<option value="all">Semua Jenjang</option>';
+        data.levels.forEach((level) => {
+            levelSelect.innerHTML += `<option value="${level}">${level}</option>`;
+        });
+
+        // Populate institution types
+        const institutionSelect = document.getElementById("filterInstitution");
+        institutionSelect.innerHTML = '<option value="all">Semua Tipe</option>';
+        data.institutionTypes.forEach((type) => {
+            institutionSelect.innerHTML += `<option value="${type}">${type}</option>`;
+        });
+
+        // Populate ranks
+        const rankSelect = document.getElementById("filterRank");
+        rankSelect.innerHTML = '<option value="all">Semua Peringkat</option>';
+        data.ranks.forEach((rank) => {
+            rankSelect.innerHTML += `<option value="${rank}">${rank}</option>`;
+        });
+    }
+
+    // Apply filters
+    function applyFilters() {
+        const formData = new FormData(document.getElementById("filterForm"));
+
+        currentFilters = {
+            page: 1,
+            limit: formData.get("limit") || 10,
+            fakultas: formData.get("fakultas") || "all",
+            level: formData.get("level") || "all",
+            institution_type: formData.get("institution_type") || "all",
+            rank: formData.get("rank") || "all",
+        };
+
+        loadFilteredData();
+    }
+
+    // Reset filters
+    function resetFilters() {
+        document.getElementById("filterForm").reset();
+        document.getElementById("filterLimit").value = "10";
+
+        currentFilters = {
+            page: 1,
+            limit: 10,
+            fakultas: "all",
+            level: "all",
+            institution_type: "all",
+            rank: "all",
+        };
+
+        loadFilteredData();
+    }
+
+    // Load filtered data
+    async function loadFilteredData() {
+        try {
+            const params = new URLSearchParams(currentFilters);
+            const response = await fetch(`/api/akreditasi-data?type=filtered_data&${params}`);
+            const result = await response.json();
+            accreditations = result.data.items;
+
+            if (result.success) {
+                renderFilteredTable(result.data.items);
+                renderPagination(result.data.pagination);
+            }
+        } catch (error) {
+            console.error("Error loading filtered data:", error);
+            document.getElementById("filteredTableBody").innerHTML =
+                '<tr><td colspan="9" class="text-center text-danger">Error loading data</td></tr>';
+        }
+    }
+
+    // Render filtered table
+    function renderFilteredTable(data) {
+        const tbody = document.getElementById("filteredTableBody");
+
+        if (!data || data.length === 0) {
+            tbody.innerHTML =
+                '<tr><td colspan="9" class="text-center text-muted">Tidak ada data yang sesuai dengan filter</td></tr>';
+            return;
+        }
+
+        let html = "";
+        data.forEach((item, index) => {
+            const globalIndex = (currentFilters.page - 1) * currentFilters.limit + index + 1;
+            const expiredDate = new Date(item.expired_on);
+            const today = new Date();
+            const isExpiringSoon = (expiredDate - today) / (1000 * 60 * 60 * 24) <= 180; // 6 months
+            const data = item.data;
+            const documentsCount = data?.documents?.length || 0;
+            const date = new Date(item.year);
+            const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+            html += `
+                <tr>
+                    <td>${globalIndex}</td>
+                    <td class="fw-medium">${item.major.name}</td>
+                    <td><span class="badge bg-info">${item.major.level}</span></td>
+                    <td>${item.major.faculty.name}</td>
+                    <td>${getRankBadge(item.rank)}</td>
+                    <td class="text-center">${formattedDate || "-"}</td>
+                    <td>
+                        <span class="${isExpiringSoon ? "expired-soon" : "active-status"}">
+                            ${formatDate(item.expired_on)}
+                        </span>
+                    </td>
+                    <td class="small">${item.institution.name}</td>
+                    <td><span class="badge ${item.institution.type === "Nasional" ? "bg-primary" : "bg-success"}">${
+                item.institution.type
+            }</span></td>
+            <td><button class="btn btn-sm btn-outline-info" onclick="viewDocuments(${item.id})" title="Lihat Dokumen">
+                            <i class="fas fa-file-alt"></i> (${documentsCount})
+                        </button></td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = html;
+    }
+
+    // Render pagination
+    function renderPagination(pagination) {
+        const infoElement = document.getElementById("paginationInfo");
+        const navElement = document.getElementById("paginationNav");
+
+        // Update info
+        const start = (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
+        const end = Math.min(pagination.currentPage * pagination.itemsPerPage, pagination.totalItems);
+        infoElement.textContent = `Menampilkan ${start} - ${end} dari ${pagination.totalItems} data`;
+
+        // Generate pagination
+        let paginationHTML = "";
+
+        // Previous button
+        if (pagination.currentPage > 1) {
+            paginationHTML += `
+                <li class="page-item">
+                    <a class="page-link" href="#" onclick="changePage(${pagination.currentPage - 1})">Previous</a>
+                </li>
+            `;
+        }
+
+        // Page numbers
+        const startPage = Math.max(1, pagination.currentPage - 2);
+        const endPage = Math.min(pagination.totalPages, pagination.currentPage + 2);
+
+        for (let i = startPage; i <= endPage; i++) {
+            paginationHTML += `
+                <li class="page-item ${i === pagination.currentPage ? "active" : ""}">
+                    <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+                </li>
+            `;
+        }
+
+        // Next button
+        if (pagination.currentPage < pagination.totalPages) {
+            paginationHTML += `
+                <li class="page-item">
+                    <a class="page-link" href="#" onclick="changePage(${pagination.currentPage + 1})">Next</a>
+                </li>
+            `;
+        }
+
+        navElement.innerHTML = paginationHTML;
+    }
+
+    // Change page function
+    function changePage(page) {
+        currentFilters.page = page;
+        loadFilteredData();
+    }
+
+    // Load statistik umum
+    async function loadStatistikUmum() {
+        try {
+            const response = await fetch("/api/akreditasi-data?type=statistik_umum");
+            const result = await response.json();
+
+            if (result.success) {
+                renderStatistikUmum(result.data);
+            }
+        } catch (error) {
+            console.error("Error loading statistik umum:", error);
+        }
+    }
+
+    // Render statistik umum
+    function renderStatistikUmum(data) {
+        const container = document.getElementById("statistikUmum");
+        container.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${data.totalAktif}</div>
+                    <div class="stat-label">Total Akreditasi Aktif</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${data.totalNasional}</div>
+                    <div class="stat-label">Akreditasi Nasional</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${data.totalInternasional}</div>
+                    <div class="stat-label">Akreditasi Internasional</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${data.berakhirTahunIni}</div>
+                    <div class="stat-label">Berakhir Tahun Ini</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${data.rankSummary["Baik Sekali"]}</div>
+                    <div class="stat-label">Peringkat Baik Sekali</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${data.rankSummary["Baik"]}</div>
+                    <div class="stat-label">Peringkat Baik</div>
+                </div>
+            `;
+    }
+
+    // Load reakreditasi belum
+    async function loadReakreditasiBelum() {
+        try {
+            const response = await fetch("/api/akreditasi-data?type=reakreditasi_belum");
+            const result = await response.json();
+            if (result.success) {
+                renderTableData("bodyReakreditasiBelum", result.data, "reakreditasi_belum");
+            }
+        } catch (error) {
+            console.error("Error loading reakreditasi belum:", error);
+        }
+    }
+
+    // Load reakreditasi nasional
+    async function loadReakreditasiNasional() {
+        try {
+            const response = await fetch("/api/akreditasi-data?type=reakreditasi_nasional");
+            const result = await response.json();
+            if (result.success) {
+                renderTableData("bodyReakreditasiNasional", result.data, "reakreditasi_nasional");
+            }
+        } catch (error) {
+            console.error("Error loading reakreditasi nasional:", error);
+        }
+    }
+
+    // Load reakreditasi internasional
+    async function loadReakreditasiInternasional() {
+        try {
+            const response = await fetch("/api/akreditasi-data?type=reakreditasi_internasional");
+            const result = await response.json();
+
+            if (result.success) {
+                renderTableData("bodyReakreditasiInternasional", result.data, "reakreditasi_internasional");
+            }
+        } catch (error) {
+            console.error("Error loading reakreditasi internasional:", error);
+        }
+    }
+
+    // Load yearly expiration summary
+    async function loadYearlyExpiration() {
+        try {
+            const response = await fetch("/api/akreditasi-data?type=berakhir_per_tahun");
+            const result = await response.json();
+
+            if (result.success) {
+                renderYearlyExpiration(result.data);
+            }
+        } catch (error) {
+            console.error("Error loading yearly expiration:", error);
+        }
+    }
+
+    // Load faculty details
+    async function loadFacultyDetails() {
+        try {
+            const response = await fetch("/api/akreditasi-data?type=detail_per_fakultas");
+            const result = await response.json();
+
+            if (result.success) {
+                renderFacultyDetails(result.data);
+            }
+        } catch (error) {
+            console.error("Error loading faculty details:", error);
+        }
+    }
+
+    // Render table data
+    function renderTableData(bodyId, data, type) {
+        const tbody = document.getElementById(bodyId);
+
+        if (!data || data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted">Tidak ada data</td></tr>';
+            return;
+        }
+        let html = "";
+        data.forEach((item, index) => {
+            const expiredDate = new Date(item.expired_on);
+            const today = new Date();
+            const isExpiringSoon = (expiredDate - today) / (1000 * 60 * 60 * 24) <= 180; // 6 months
+            const date = new Date(item.year);
+            const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+            html += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td class="fw-medium">${item.major.name}</td>
+                        <td><span class="badge bg-info">${item.major.level}</span></td>
+                        <td>${item.major.faculty.name}</td>
+                        <td>${getRankBadge(item.rank)}</td>
+                        ${type === "reakreditasi_belum" ? "" : `<td class="text-center">${formattedDate || "-"}</td>`}
+                        <td>
+                            <span class="${isExpiringSoon ? "expired-soon" : "active-status"}">
+                                ${formatDate(item.expired_on)}
+                            </span>
+                        </td>
+                        <td>${getStatusBadge(item.active, isExpiringSoon)}</td>
+                    </tr>
+                `;
+        });
+
+        tbody.innerHTML = html;
+    }
+
+    // Render yearly expiration
+    function renderYearlyExpiration(data) {
+        const container = document.getElementById("yearlyExpirationSummary");
+        const currentYear = new Date().getFullYear();
+
+        let html = "";
+        for (let year = currentYear; year <= currentYear + 3; year++) {
+            const yearData = data[year];
+            if (yearData) {
+                html += `
+                        <div class="col-lg-3 col-md-6">
+                            <div class="year-summary-table">
+                                <div class="year-header">
+                                    Tahun ${year}
+                                </div>
+                                <div class="p-3">
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <div class="text-center">
+                                                <div class="badge badge-unggul mb-1">${yearData.Unggul}</div>
+                                                <div class="small text-muted">Unggul</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-center">
+                                                <div class="badge badge-baik-sekali mb-1">${yearData["Baik Sekali"]}</div>
+                                                <div class="small text-muted">Baik Sekali</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-center">
+                                                <div class="badge badge-baik mb-1">${yearData.Baik}</div>
+                                                <div class="small text-muted">Baik</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-center">
+                                                <div class="fw-bold text-primary fs-5">${yearData.Total}</div>
+                                                <div class="small text-muted">Total</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+            }
+        }
+
+        container.innerHTML = html;
+    }
+
+    // Render faculty details
+    function renderFacultyDetails(data) {
+        const container = document.getElementById("facultyDetails");
+
+        if (!data || data.length === 0) {
+            container.innerHTML = '<div class="text-center text-muted">Tidak ada data fakultas</div>';
+            return;
+        }
+
+        let html = "";
+        data.forEach((faculty, index) => {
+            html += `
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faculty-heading-${index}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                    data-bs-target="#faculty-collapse-${index}" aria-expanded="false">
+                                <div class="faculty-summary w-100 me-3">
+                                    <div>
+                                        <strong>${faculty.facultyName}</strong>
+                                        <span class="badge bg-secondary ms-2">${faculty.summary.total} Program</span>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <span class="badge badge-unggul">${faculty.summary.Unggul} Unggul</span>
+                                        <span class="badge badge-baik-sekali">${
+                                            faculty.summary["Baik Sekali"]
+                                        } Baik Sekali</span>
+                                        <span class="badge badge-baik">${faculty.summary.Baik} Baik</span>
+                                        ${
+                                            faculty.summary.expiringSoon > 0
+                                                ? `<span class="badge bg-danger">${faculty.summary.expiringSoon} Segera Berakhir</span>`
+                                                : ""
+                                        }
+                                    </div>
+                                </div>
+                            </button>
+                        </h2>
+                        <div id="faculty-collapse-${index}" class="accordion-collapse collapse" 
+                             data-bs-parent="#facultyDetails">
+                            <div class="accordion-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Program Studi</th>
+                                                <th>Jenjang</th>
+                                                <th>Peringkat</th>
+                                                <th>Tanggal Berlaku</th>
+                                                <th>Tanggal Berakhir</th>
+                                                <th>Lembaga</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                `;
+
+            faculty.programs.forEach((program, idx) => {
+                const expiredDate = new Date(program.expired_on);
+                const today = new Date();
+                const isExpiringSoon = (expiredDate - today) / (1000 * 60 * 60 * 24) <= 180;
+                const date = new Date(program.year);
+                const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`; 
+                html += `
+                        <tr>
+                            <td>${idx + 1}</td>
+                            <td class="fw-medium">${program.major.name}</td>
+                            <td><span class="badge bg-info">${program.major.level}</span></td>
+                            <td>${getRankBadge(program.rank)}</td>
+                            <td class="text-center">${formattedDate || "-"}</td>
+                            <td>
+                                <span class="${isExpiringSoon ? "expired-soon" : "active-status"}">
+                                    ${formatDate(program.expired_on)}
+                                </span>
+                            </td>
+                            <td class="small">${program.institution.name}</td>
+                        </tr>
+                    `;
+            });
+
+            html += `
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+        });
+
+        container.innerHTML = html;
+    }
+
+    // Helper functions
+    function getRankBadge(rank) {
+        if (!rank) return '<span class="badge bg-secondary">-</span>';
+
+        switch (rank) {
+            case "Unggul":
+                return '<span class="badge badge-unggul">Unggul</span>';
+            case "Baik Sekali":
+                return '<span class="badge badge-baik-sekali">Baik Sekali</span>';
+            case "Baik":
+                return '<span class="badge badge-baik">Baik</span>';
+            default:
+                return `<span class="badge bg-secondary">${rank}</span>`;
+        }
+    }
+
+    function getStatusBadge(active, isExpiringSoon) {
+        if (!active) {
+            return '<span class="badge badge-expired">Tidak Aktif</span>';
+        }
+
+        if (isExpiringSoon) {
+            return '<span class="badge bg-warning text-dark">Segera Berakhir</span>';
+        }
+
+        return '<span class="badge bg-success">Aktif</span>';
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return "-";
+
+        const date = new Date(dateString);
+        return date.toLocaleDateString("id-ID", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        });
+    }
+
+       function viewDocuments(accreditationId) {
+        const accreditation = (accreditations.find((a) => a.id === accreditationId));
+        const accreditationData = accreditation?.data;
+        const modal = new bootstrap.Modal(document.getElementById("documentsModal"));
+        const container = document.getElementById("documentsListView");
+        container.innerHTML = "";   
+
+        if (!accreditation) {
+            container.innerHTML = '<div class="alert alert-warning">Akreditasi tidak ditemukan</div>';
+            modal.show();
+            return;
+        }
+
+        if (accreditationData && 
+            accreditationData.documents && 
+            Array.isArray(accreditationData.documents) && 
+            accreditationData.documents.length > 0) {
+            
+            console.log('Rendering documents:', accreditationData.documents); // Debug
+            
+            accreditationData.documents.forEach((doc, index) => {
+                const div = document.createElement("div");
+                div.className = "d-flex justify-content-between align-items-center p-3 border rounded mb-2";
+                div.innerHTML = `
+                    <div>
+                        <h6 class="mb-1">${doc.name || 'Dokumen ' + (index + 1)}</h6>
+                        <small class="text-muted">${doc.file || 'No file'}</small>
+                    </div>
+                    <div>
+                        <a href="${doc.file}" target="_blank" class="btn btn-sm btn-outline-primary me-2" title="Lihat">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="${doc.file}" download class="btn btn-sm btn-outline-success" title="Download">
+                            <i class="fas fa-download"></i>
+                        </a>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        } else {
+            console.log('No documents found or invalid structure'); // Debug
+            container.innerHTML = '<div class="text-center text-muted p-4">Tidak ada dokumen</div>';
+        }
+
+        modal.show();
+    }
+
+</script>

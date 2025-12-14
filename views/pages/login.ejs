@@ -1,0 +1,59 @@
+<div class="container d-flex justify-content-center align-items-center" style="margin-top: 50px; min-height: 80vh">
+    <div class="card p-4 shadow-lg" style="max-width: 420px; width: 100%">
+        <div class="card-body">
+            <!-- Header -->
+            <div class="text-center mb-4">
+                <a class="text-center" href="/">
+                    <img src="/asset/UGGlobal.png" alt="Logo Gunadarma" style="height: 80px" />
+                </a>
+                <p class="text-muted small">Silahkan masuk dengan akun kampus Anda</p>
+            </div>
+
+            <% if (typeof error !== 'undefined') { %>
+            <div class="alert alert-danger"><%= error %></div>
+            <% } %> <% if (typeof success !== 'undefined') { %>
+            <div class="alert alert-success"><%= success %></div>
+            <% } %>
+
+            <!-- Form -->
+            <form action="/api/login" method="POST">
+                <!-- Username/Email -->
+                <div class="mb-3">
+                    <label for="username" class="form-label fw-semibold">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="fas fa-user"></i></span>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="username"
+                            name="username"
+                            placeholder="Masukkan username"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="mb-3">
+                    <label for="password" class="form-label fw-semibold">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="fas fa-lock"></i></span>
+                        <input
+                            type="password"
+                            class="form-control"
+                            id="password"
+                            name="password"
+                            placeholder="Masukkan password"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <!-- Button -->
+                <button type="submit" class="btn btn-primary w-100 fw-semibold py-2 shadow-sm">
+                    <i class="fas fa-sign-in-alt me-1"></i> Masuk
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

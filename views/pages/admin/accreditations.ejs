@@ -1,0 +1,645 @@
+<style>
+    .table-responsive {
+        overflow-x: auto;
+    }
+</style>
+<div id="accreditations" class="content-section active">
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h2><i class="fas fa-certificate me-2"></i>Manajemen Akreditasi</h2>
+            <p class="text-muted mb-0">Kelola data akreditasi</p>
+        </div>
+        <button class="btn btn-primary" onclick="showAccreditationModal()">
+            <i class="fas fa-plus me-2"></i>Tambah Akreditasi
+        </button>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Daftar Akreditasi</h5>
+        </div>
+        <div class="card-body">
+            <div id="errorMessage" class="alert alert-danger d-none"></div>
+            <div id="successMessage" class="alert alert-success d-none"></div>
+            <div class="table-responsive">
+            <table class="table table-striped table-hover" id="accreditationsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nama</th>
+                        <th>Nomor SK</th>
+                        <th>Institusi</th>
+                        <th>Program Studi</th>
+                        <th>Peringkat</th>
+                        <th>Masa Berlaku</th>
+                        <th>Status</th>
+                        <th>Dokumen</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Accreditation -->
+<div class="modal fade" id="accreditationModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="accreditationForm" onsubmit="event.preventDefault(); saveAccreditation();">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="accreditationModalTitle">Tambah Akreditasi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="accreditationId" />
+                    <div id="errorMessageModal" class="alert alert-danger d-none"></div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="institutionId" class="form-label">Institusi</label>
+                                <select class="form-select" id="institutionId" required>
+                                    <option value="">Pilih Institusi</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="majorId" class="form-label">Program Studi</label>
+                                <select class="form-select" id="majorId" required>
+                                    <option value="">Pilih Program Studi</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="accreditationCode" class="form-label">Nomor SK</label>
+                                <input type="text" class="form-control" id="accreditationCode" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="accreditationRank" class="form-label">Peringkat</label>
+                                <select class="form-select" id="accreditationRank" required>
+                                    <option value="">Pilih Peringkat</option>
+                                    <option value="A">A</option>
+                                    <option value="B">B</option>
+                                    <option value="C">C</option>
+                                    <option value="Unggul">Unggul</option>
+                                    <option value="Baik Sekali">Baik Sekali</option>
+                                    <option value="Baik">Baik</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="accreditationYear" class="form-label">Masa Berlaku</label>
+                                <input type="date" class="form-control" id="accreditationYear" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="accreditationExpiredOn" class="form-label">Berlaku Sampai</label>
+                                <input type="date" class="form-control" id="accreditationExpiredOn" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="accreditationActive" class="form-label">Status</label>
+                        <select class="form-select" id="accreditationActive" required>
+                            <option value="">Pilih Status</option>
+                            <option value="aktif">Aktif</option>
+                            <option value="nonaktif">Non-Aktif</option>
+                        </select>
+                    </div>
+
+                    <!-- Documents Section -->
+                    <div class="mb-3">
+                        <label class="form-label">Dokumen</label>
+                        <div class="border rounded p-3">
+                            <div id="documentsContainer">
+                                <!-- Document items will be added here -->
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="addDocumentField()">
+                                <i class="fas fa-plus me-1"></i>Tambah Dokumen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal View Documents -->
+<div class="modal fade" id="documentsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Dokumen Akreditasi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="documentsListView">
+                    <!-- Documents list will be shown here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Jquery CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+    let accreditations = [];
+    let institutions = [];
+    let majors = [];
+    let documentIndex = 0;
+    let dataTable;
+    let userRoleCode = "<%= user.roleCode %>";
+    let userMajorId = "<%= user.majorId %>";
+
+    async function loadAccreditations() {
+        accreditations = await fetchAccreditations();
+        renderDataTable();
+    }
+
+    function renderDataTable() {
+        // Destroy existing DataTable if it exists
+        if (dataTable) {
+            dataTable.destroy();
+        }
+
+        // Initialize DataTable
+        dataTable = $('#accreditationsTable').DataTable({
+            data: accreditations,
+            columns: [
+                { data: 'id' },
+                { data: 'name' },
+                { 
+                    data: 'code',
+                    render: function(data) {
+                        return `<span class="badge bg-secondary">${data}</span>`;
+                    }
+                },
+                { 
+                    data: 'institution_id',
+                    render: function(data) {
+                        const institution = institutions.find(i => i.id === data);
+                        return institution ? institution.name : 'N/A';
+                    }
+                },
+                { 
+                    data: 'major_id',
+                    render: function(data) {
+                        const major = majors.find(m => m.id === data);
+                        return major ? major.name : 'N/A';
+                    }
+                },
+                { 
+                    data: 'rank',
+                    render: function(data) {
+                        return `<span class="badge bg-info">${data}</span>`;
+                    }
+                },
+                { 
+                    data: 'year',
+                    render: function(data) {
+                        const date = new Date(data);
+                        return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+                    }
+                },
+                { 
+                    data: 'active',
+                    render: function(data) {
+                        return `<span class="badge bg-${data ? 'success' : 'danger'}">
+                            ${data ? 'Aktif' : 'Non-Aktif'}
+                        </span>`;
+                    }
+                },
+                { 
+                    data: null,
+                    render: function(data, type, row) {
+                        const documentsCount = row.data?.documents?.length || 0;
+                        return `<button class="btn btn-sm btn-outline-info" onclick="viewDocuments(${row.id})" title="Lihat Dokumen">
+                            <i class="fas fa-file-alt"></i> (${documentsCount})
+                        </button>`;
+                    },
+                    orderable: false
+                },
+                { 
+                    data: null,
+                    render: function(data, type, row) {
+                        return `
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editAccreditation(${row.id})" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteAccreditation(${row.id})" title="Hapus">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        `;
+                    },
+                    orderable: false
+                }
+            ],
+            order: [[0, 'desc']], // Sort by ID descending by default
+            pageLength: 10,
+            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Semua"]],
+            language: {
+                lengthMenu: "Tampilkan _MENU_ data per halaman",
+                zeroRecords: "Data tidak ditemukan",
+                info: "Menampilkan halaman _PAGE_ dari _PAGES_",
+                infoEmpty: "Tidak ada data tersedia",
+                infoFiltered: "(difilter dari _MAX_ total data)",
+                search: "Cari:",
+                paginate: {
+                    first: "Pertama",
+                    last: "Terakhir",
+                    next: "Selanjutnya",
+                    previous: "Sebelumnya"
+                }
+            },
+            responsive: true,
+            autoWidth: false
+        });
+    }
+
+    async function loadInstitutions() {
+        institutions = await fetchInstitutions();
+        const select = document.getElementById("institutionId");
+        select.innerHTML = '<option value="">Pilih Institusi</option>';
+        institutions.forEach((institution) => {
+            const option = document.createElement("option");
+            option.value = institution.id;
+            option.textContent = institution.name;
+            select.appendChild(option);
+        });
+    }
+
+    async function loadMajors() {
+        majors = await fetchMajors();
+        const select = document.getElementById("majorId");
+        select.innerHTML = '<option value="">Pilih Program Studi</option>';
+        majors.forEach((major) => {
+            const option = document.createElement("option");
+            option.value = major.id;
+            option.textContent = major.name + " - " + major.level;
+            select.appendChild(option);
+        });
+    }
+
+    async function fetchAccreditations() {
+        try {
+            const response = await fetch(
+                `/api/accreditations${userRoleCode === "STUDY_PROGRAM" ? "?major_id=" + userMajorId : ""}`
+            );
+            if (!response.ok) throw new Error("Network response was not ok");
+            const data = await response.json();
+            
+            // Parse the 'data' field from string to object
+            return data.map(acc => {
+                console.log('Processing accreditation:', acc.id, 'data type:', typeof acc.data); // Debug
+                
+                if (typeof acc.data === 'string' && acc.data.trim() !== '') {
+                    try {
+                        acc.data = JSON.parse(acc.data);
+                    } catch (e) {
+                        console.error('Error parsing data for accreditation:', acc.id, e);
+                        console.error('Raw data:', acc.data);
+                        acc.data = { documents: [] };
+                    }
+                } else if (!acc.data || acc.data === '') {
+                    acc.data = { documents: [] };
+                }
+                
+                // Ensure documents is always an array
+                if (!acc.data.documents || !Array.isArray(acc.data.documents)) {
+                    acc.data.documents = [];
+                }
+                
+                return acc;
+            });
+        } catch (error) {
+            console.error("Error fetching accreditations:", error);
+            return [];
+        }
+    }
+
+    async function fetchInstitutions() {
+        try {
+            const response = await fetch("/api/institutions");
+            if (!response.ok) throw new Error("Network response was not ok");
+            return await response.json();
+        } catch (error) {
+            console.error("Error fetching institutions:", error);
+            return [];
+        }
+    }
+
+    async function fetchMajors() {
+        try {
+            const response = await fetch("/api/majors");
+            if (!response.ok) throw new Error("Network response was not ok");
+            return await response.json();
+        } catch (error) {
+            console.error("Error fetching majors:", error);
+            return [];
+        }
+    }
+
+    function addDocumentField(name = "", file = "") {
+        documentIndex++;
+        const container = document.getElementById("documentsContainer");
+        const div = document.createElement("div");
+        div.className = "document-item mb-3 p-3 border rounded bg-light";
+        div.id = `document-${documentIndex}`;
+
+        div.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="mb-0">Dokumen ${documentIndex}</h6>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeDocumentField(${documentIndex})">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label">Nama Dokumen</label>
+                    <input type="text" class="form-control document-name" value="${name}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">File</label>
+                    <input type="file" class="form-control document-file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                    ${file ? `<small class="text-muted">File saat ini: ${file}</small>` : ""}
+                </div>
+            </div>
+            <input type="hidden" class="current-file" value="${file}">
+        `;
+
+        container.appendChild(div);
+    }
+
+    function removeDocumentField(index) {
+        const element = document.getElementById(`document-${index}`);
+        if (element) {
+            element.remove();
+        }
+    }
+
+    function showAccreditationModal(accreditationId = null) {
+        const modal = new bootstrap.Modal(document.getElementById("accreditationModal"));
+        const title = document.getElementById("accreditationModalTitle");
+        const form = document.getElementById("accreditationForm");
+
+        // Clear documents container
+        document.getElementById("documentsContainer").innerHTML = "";
+        documentIndex = 0;
+
+        if (accreditationId) {
+            const accreditation = accreditations.find((a) => a.id === accreditationId);
+            title.textContent = "Edit Akreditasi";
+            document.getElementById("accreditationId").value = accreditation.id;
+            document.getElementById("institutionId").value = accreditation.institution_id || "";
+            document.getElementById("majorId").value = accreditation.major_id || "";
+            document.getElementById("accreditationCode").value = accreditation.code;
+            document.getElementById("accreditationRank").value = accreditation.rank;
+            const accreditationDate = new Date(accreditation.year);
+            document.getElementById("accreditationYear").valueAsDate = accreditationDate;
+            const date = new Date(accreditation.expired_on);
+            document.getElementById("accreditationExpiredOn").valueAsDate = date;
+            document.getElementById("accreditationActive").value = accreditation.active ? "aktif" : "nonaktif";
+
+            // Load existing documents
+            console.log('Loading documents for edit:', accreditation.data); // Debug
+            if (accreditation.data?.documents && Array.isArray(accreditation.data.documents)) {
+                accreditation.data.documents.forEach((doc) => {
+                    addDocumentField(doc.name, doc.file);
+                });
+            }
+        } else {
+            title.textContent = "Tambah Akreditasi";
+            form.reset();
+            document.getElementById("accreditationId").value = "";
+        }
+
+        // Add at least one document field if none exist
+        if (document.getElementById("documentsContainer").children.length === 0) {
+            addDocumentField();
+        }
+
+        modal.show();
+    }
+
+    function editAccreditation(accreditationId) {
+        showAccreditationModal(accreditationId);
+    }
+
+    async function saveAccreditation() {
+        const accreditationId = document.getElementById("accreditationId").value;
+        const formData = new FormData();
+        const majorSelect = document.getElementById("majorId");
+        const requiredFields = {
+            institution_id: document.getElementById("institutionId").value,
+            major_id: majorSelect.value,
+            code: document.getElementById("accreditationCode").value.trim(),
+            name: majorSelect.options[majorSelect.selectedIndex].textContent,
+            rank: document.getElementById("accreditationRank").value,
+            year: document.getElementById("accreditationYear").value,
+            expired_on: document.getElementById("accreditationExpiredOn").value,
+            active: document.getElementById("accreditationActive").value,
+        };
+
+        const emptyFields = Object.entries(requiredFields).filter(([key, value]) => !value);
+        if (emptyFields.length > 0) {
+            const errorMessage = document.getElementById("errorMessageModal");
+            errorMessage.textContent = `Field ${emptyFields
+                .map(([key]) => key.replace("_", " "))
+                .join(", ")} wajib diisi.`;
+            errorMessage.classList.remove("d-none");
+            return;
+        }
+
+        // Hide modal error message
+        document.getElementById("errorMessageModal").classList.add("d-none");
+
+        // Add basic accreditation data
+        formData.append("institution_id", requiredFields.institution_id);
+        formData.append("major_id", requiredFields.major_id);
+        formData.append("code", requiredFields.code);
+        formData.append("name", requiredFields.name);
+        formData.append("rank", requiredFields.rank);
+        formData.append("year", requiredFields.year);
+        formData.append("expired_on", requiredFields.expired_on);
+        formData.append("active", requiredFields.active === "aktif");
+
+        // Collect documents data
+        const documentItems = document.querySelectorAll(".document-item");
+        const documents = [];
+        let fileIndex = 0;
+
+        documentItems.forEach((item, index) => {
+            const nameInput = item.querySelector(".document-name");
+            const fileInput = item.querySelector(".document-file");
+            const currentFile = item.querySelector(".current-file").value;
+
+            if (nameInput.value.trim()) {
+                const docData = {
+                    name: nameInput.value.trim(),
+                    file: currentFile,
+                };
+
+                if (fileInput.files[0]) {
+                    formData.append("documents", fileInput.files[0]);
+                    docData.fileIndex = fileIndex;
+                    fileIndex++;
+                }
+
+                documents.push(docData);
+            }
+        });
+
+        formData.append("documentsData", JSON.stringify(documents));
+
+        try {
+            const url = accreditationId ? `/api/accreditations/${accreditationId}` : "/api/accreditations";
+            const method = accreditationId ? "PUT" : "POST";
+
+            const response = await fetch(url, {
+                method: method,
+                body: formData,
+            });
+
+            const json = await response.json();
+
+            if (response.ok) {
+                const successMessage = document.getElementById("successMessage");
+                successMessage.textContent = accreditationId
+                    ? "Akreditasi berhasil diperbarui."
+                    : "Akreditasi berhasil ditambahkan.";
+                successMessage.classList.remove("d-none");
+                setTimeout(() => successMessage.classList.add("d-none"), 5000);
+
+                bootstrap.Modal.getInstance(document.getElementById("accreditationModal")).hide();
+                loadAccreditations();
+            } else {
+                const errorMessage = document.getElementById("errorMessageModal");
+                errorMessage.textContent = json.message || "Terjadi kesalahan saat menyimpan akreditasi.";
+                errorMessage.classList.remove("d-none");
+                setTimeout(() => errorMessage.classList.add("d-none"), 5000);
+            }
+        } catch (error) {
+            console.error("Error saving accreditation:", error);
+            const errorMessage = document.getElementById("errorMessageModal");
+            errorMessage.textContent = "Terjadi kesalahan saat menyimpan akreditasi.";
+            errorMessage.classList.remove("d-none");
+            setTimeout(() => errorMessage.classList.add("d-none"), 5000);
+        }
+    }
+
+    async function deleteAccreditation(accreditationId) {
+        const confirmDelete = confirm("Apakah Anda yakin ingin menghapus akreditasi ini?");
+        if (!confirmDelete) return;
+
+        try {
+            const response = await fetch(`/api/accreditations/${accreditationId}`, {
+                method: "DELETE",
+            });
+
+            if (response.ok) {
+                const successMessage = document.getElementById("successMessage");
+                successMessage.textContent = "Akreditasi berhasil dihapus.";
+                successMessage.classList.remove("d-none");
+                setTimeout(() => successMessage.classList.add("d-none"), 5000);
+            } else {
+                const json = await response.json();
+                const errorMessage = document.getElementById("errorMessage");
+                errorMessage.textContent = json.message || "Terjadi kesalahan saat menghapus akreditasi.";
+                errorMessage.classList.remove("d-none");
+                setTimeout(() => errorMessage.classList.add("d-none"), 5000);
+            }
+
+            loadAccreditations();
+        } catch (error) {
+            console.error("Error deleting accreditation:", error);
+            const errorMessage = document.getElementById("errorMessage");
+            errorMessage.textContent = "Terjadi kesalahan saat menghapus akreditasi.";
+            errorMessage.classList.remove("d-none");
+            setTimeout(() => errorMessage.classList.add("d-none"), 5000);
+        }
+    }
+
+    function viewDocuments(accreditationId) {
+        const accreditation = accreditations.find((a) => a.id === accreditationId);
+        const modal = new bootstrap.Modal(document.getElementById("documentsModal"));
+        const container = document.getElementById("documentsListView");
+
+        container.innerHTML = "";
+
+        if (!accreditation) {
+            container.innerHTML = '<div class="alert alert-warning">Akreditasi tidak ditemukan</div>';
+            modal.show();
+            return;
+        }
+
+        if (accreditation.data && 
+            accreditation.data.documents && 
+            Array.isArray(accreditation.data.documents) && 
+            accreditation.data.documents.length > 0) {
+            
+            console.log('Rendering documents:', accreditation.data.documents); // Debug
+            
+            accreditation.data.documents.forEach((doc, index) => {
+                const div = document.createElement("div");
+                div.className = "d-flex justify-content-between align-items-center p-3 border rounded mb-2";
+                div.innerHTML = `
+                    <div>
+                        <h6 class="mb-1">${doc.name || 'Dokumen ' + (index + 1)}</h6>
+                        <small class="text-muted">${doc.file || 'No file'}</small>
+                    </div>
+                    <div>
+                        <a href="${doc.file}" target="_blank" class="btn btn-sm btn-outline-primary me-2" title="Lihat">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="${doc.file}" download class="btn btn-sm btn-outline-success" title="Download">
+                            <i class="fas fa-download"></i>
+                        </a>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        } else {
+            console.log('No documents found or invalid structure'); // Debug
+            container.innerHTML = '<div class="text-center text-muted p-4">Tidak ada dokumen</div>';
+        }
+
+        modal.show();
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        loadInstitutions();
+        loadMajors();
+        loadAccreditations();
+    });
+</script>

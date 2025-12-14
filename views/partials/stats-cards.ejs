@@ -1,0 +1,494 @@
+<section class="stats-section py-5">
+    <div class="container-main">
+        <!-- Section Header -->
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h2 class="section-title mb-2">Statistik Akreditasi</h2>
+                <p class="section-subtitle text-muted">Data akreditasi program studi terkini</p>
+                <div class="title-separator mx-auto"></div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row g-4">
+            <!-- Akreditasi A -->
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <a href="#" class="stats-card stats-card-a">
+                    <div class="stats-card-inner">
+                        <div class="stats-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stats-content">
+                            <div class="stats-number">0</div>
+                            <div class="stats-label">Akreditasi A</div>
+                            <div class="stats-description">Excellent</div>
+                        </div>
+                        <div class="stats-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Baik Sekali -->
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <a href="#" class="stats-card stats-card-baik-sekali">
+                    <div class="stats-card-inner">
+                        <div class="stats-icon">
+                            <i class="fas fa-medal"></i>
+                        </div>
+                        <div class="stats-content">
+                            <div class="stats-number">0</div>
+                            <div class="stats-label">Baik Sekali</div>
+                            <div class="stats-description">Very Good</div>
+                        </div>
+                        <div class="stats-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Baik -->
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <a href="#" class="stats-card stats-card-baik">
+                    <div class="stats-card-inner">
+                        <div class="stats-icon">
+                            <i class="fas fa-thumbs-up"></i>
+                        </div>
+                        <div class="stats-content">
+                            <div class="stats-number">0</div>
+                            <div class="stats-label">Baik</div>
+                            <div class="stats-description">Good</div>
+                        </div>
+                        <div class="stats-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Dalam Perbaikan -->
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <a href="#" class="stats-card stats-card-perbaikan">
+                    <div class="stats-card-inner">
+                        <div class="stats-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <div class="stats-content">
+                            <div class="stats-number">0</div>
+                            <div class="stats-label">Program Studi yang belum terakreditasi</div>
+                            <div class="stats-description">In Progress</div>
+                        </div>
+                        <div class="stats-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Total Summary -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="total-summary">
+                    <div class="total-summary-inner">
+                        <div class="total-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <div class="total-content">
+                            <span class="total-label">Total Akreditasi Aktif:</span>
+                            <span class="total-number">0</span>
+                            <span class="total-description">Program Studi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Stats Section Styles */
+    .stats-section {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stats-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e2e8f0' fill-opacity='0.3'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        opacity: 0.5;
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+
+    .section-subtitle {
+        font-size: 1.1rem;
+        color: #64748b;
+    }
+
+    .title-separator {
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        border-radius: 2px;
+        margin-top: 1rem;
+    }
+
+    /* Stats Card Styles */
+    .stats-card {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        height: 100%;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stats-card-inner {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem 1.5rem;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .stats-card-inner::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.1) 100%);
+        z-index: -1;
+    }
+
+    .stats-card:hover .stats-card-inner {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Card Variants */
+    .stats-card-a .stats-card-inner {
+        background: linear-gradient(135deg, #059669, #047857);
+        color: white;
+    }
+
+    .stats-card-baik-sekali .stats-card-inner {
+        background: linear-gradient(135deg, #16a34a, #15803d);
+        color: white;
+    }
+
+    .stats-card-baik .stats-card-inner {
+        background: linear-gradient(135deg, #eab308, #ca8a04);
+        color: white;
+    }
+
+    .stats-card-perbaikan .stats-card-inner {
+        background: linear-gradient(135deg, #dc2626, #b91c1c);
+        color: white;
+    }
+
+    /* Icon Styles */
+    .stats-icon {
+        font-size: 2.5rem;
+        margin-right: 1.5rem;
+        opacity: 0.9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        flex-shrink: 0;
+    }
+
+    /* Content Styles */
+    .stats-content {
+        flex: 1;
+    }
+
+    .stats-number {
+        font-size: 3rem;
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .stats-label {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        opacity: 0.95;
+    }
+
+    .stats-description {
+        font-size: 0.875rem;
+        opacity: 0.8;
+        font-weight: 400;
+    }
+
+    /* Arrow Styles */
+    .stats-arrow {
+        font-size: 1.25rem;
+        opacity: 0.7;
+        margin-left: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .stats-card:hover .stats-arrow {
+        transform: translateX(4px);
+        opacity: 1;
+    }
+
+    /* Total Summary */
+    .total-summary {
+        margin-top: 2rem;
+    }
+
+    .total-summary-inner {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e2e8f0;
+    }
+
+    .total-icon {
+        font-size: 2rem;
+        color: #6366f1;
+        margin-right: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        border-radius: 10px;
+    }
+
+    .total-content {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .total-label {
+        font-size: 1.1rem;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    .total-number {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #1e293b;
+    }
+
+    .total-description {
+        font-size: 0.95rem;
+        color: #64748b;
+        font-weight: 400;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+        .section-title {
+            font-size: 2.25rem;
+        }
+
+        .stats-number {
+            font-size: 2.5rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .stats-section {
+            padding: 2rem 0;
+        }
+
+        .section-title {
+            font-size: 2rem;
+        }
+
+        .stats-card-inner {
+            padding: 1.5rem 1rem;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .stats-icon {
+            margin-right: 0;
+            margin-bottom: 1rem;
+            width: 50px;
+            height: 50px;
+            font-size: 2rem;
+        }
+
+        .stats-number {
+            font-size: 2.25rem;
+        }
+
+        .stats-arrow {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            margin: 0;
+        }
+
+        .total-summary-inner {
+            flex-direction: column;
+            text-align: center;
+            gap: 1rem;
+        }
+
+        .total-icon {
+            margin-right: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        .total-content {
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .stats-card-inner {
+            padding: 1.25rem 0.75rem;
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+        }
+
+        .stats-number {
+            font-size: 2rem;
+        }
+
+        .stats-label {
+            font-size: 1rem;
+        }
+    }
+
+    /* Animation for number counting */
+    .stats-number {
+        animation: fadeInUp 0.8s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Loading state */
+    .stats-card.loading .stats-number::after {
+        content: "...";
+        animation: loading 1.5s infinite;
+    }
+
+    @keyframes loading {
+        0%,
+        20% {
+            opacity: 0;
+        }
+        50% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+</style>
+
+<script>
+    async function fetchStats() {
+        try {
+            const response = await fetch("/api/accreditations/stats");
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Error fetching stats:", error);
+            return null;
+        }
+    }
+
+    async function loadStats() {
+        const stats = await fetchStats();
+        if (stats) {
+            const statsNumbers = document.querySelectorAll(".stats-number");
+            const statsData = stats.data.accreditationStats;
+            const totalStats = stats.data.totalAccreditations;
+            statsNumbers.forEach((number, index) => {
+                number.textContent = statsData[Object.keys(statsData)[index]];
+            });
+            const totalNumber = document.querySelector(".total-number");
+            totalNumber.textContent = totalStats;
+        }
+    }
+
+    // Optional: Add number counting animation
+    document.addEventListener("DOMContentLoaded", function () {
+        loadStats();
+        const numbers = document.querySelectorAll(".stats-number[data-count]");
+
+        const animateNumber = (element, target) => {
+            const start = 0;
+            const increment = target / 50; // Adjust speed
+            let current = start;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current);
+            }, 30);
+        };
+
+        // Intersection Observer for animation trigger
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    const target = parseInt(entry.target.getAttribute("data-count"));
+                    animateNumber(entry.target, target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        });
+
+        numbers.forEach((number) => observer.observe(number));
+    });
+</script>

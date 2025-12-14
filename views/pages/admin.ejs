@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Admin Dashboard - Gunadarma</title>
+        <link rel="icon" type="image/x-icon" href="/asset/logo-gunadarma.png" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --primary-color: #2563eb;
+                --secondary-color: #1e40af;
+                --success-color: #16a34a;
+                --warning-color: #ca8a04;
+                --danger-color: #dc2626;
+                --light-bg: #f8fafc;
+                --sidebar-bg: #1e293b;
+                --sidebar-hover: #334155;
+                --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: "Inter", sans-serif;
+                background-color: var(--light-bg);
+                overflow-x: hidden;
+            }
+
+            .admin-container {
+                display: flex;
+                min-height: 100vh;
+            }
+
+            .sidebar {
+                width: 280px;
+                background: var(--sidebar-bg);
+                color: white;
+                position: fixed;
+                height: 100vh;
+                overflow-y: auto;
+                transition: all 0.3s ease;
+                z-index: 1000;
+            }
+
+            .sidebar-brand {
+                padding: 1.5rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .sidebar-brand h4 {
+                color: white;
+                margin: 0;
+                font-weight: 700;
+            }
+
+            .sidebar-menu {
+                padding: 1rem 0;
+            }
+
+            .menu-item {
+                display: block;
+                padding: 1rem 1.5rem;
+                color: rgba(255, 255, 255, 0.8);
+                text-decoration: none;
+                transition: all 0.3s ease;
+                border: none;
+                background: none;
+                width: 100%;
+                text-align: left;
+            }
+
+            .menu-item:hover,
+            .menu-item.active {
+                background: var(--sidebar-hover);
+                color: white;
+                text-decoration: none;
+            }
+
+            .menu-item i {
+                width: 20px;
+                margin-right: 0.75rem;
+            }
+
+            .main-content {
+                margin-left: 280px;
+                flex: 1;
+                padding: 2rem;
+                min-height: 100vh;
+            }
+
+            .content-section {
+                display: none;
+            }
+
+            .content-section.active {
+                display: block;
+            }
+
+            .page-header {
+                background: white;
+                border-radius: 12px;
+                padding: 1.5rem;
+                margin-bottom: 2rem;
+                box-shadow: var(--card-shadow);
+            }
+
+            .card {
+                border: none;
+                border-radius: 12px;
+                box-shadow: var(--card-shadow);
+                margin-bottom: 1.5rem;
+            }
+
+            .table {
+                margin-bottom: 0;
+            }
+
+            .table th {
+                background-color: var(--light-bg);
+                border: none;
+                font-weight: 600;
+                color: #374151;
+                padding: 1rem;
+            }
+
+            .table td {
+                border: none;
+                padding: 1rem;
+                vertical-align: middle;
+            }
+
+            .table tbody tr {
+                border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            }
+
+            .table tbody tr:hover {
+                background-color: rgba(37, 99, 235, 0.05);
+            }
+
+            .btn {
+                border-radius: 8px;
+                font-weight: 500;
+                padding: 0.5rem 1rem;
+            }
+
+            .btn-sm {
+                padding: 0.25rem 0.75rem;
+            }
+
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1.5rem;
+                margin-bottom: 2rem;
+            }
+
+            .stats-card {
+                background: white;
+                border-radius: 12px;
+                padding: 1.5rem;
+                box-shadow: var(--card-shadow);
+                border-left: 4px solid var(--primary-color);
+            }
+
+            .stats-number {
+                font-size: 2rem;
+                font-weight: 700;
+                color: var(--primary-color);
+                margin-bottom: 0.5rem;
+            }
+
+            .stats-label {
+                color: #6b7280;
+                font-size: 0.875rem;
+            }
+
+            .sidebar-toggle {
+                display: none;
+            }
+
+            @media (max-width: 768px) {
+                .sidebar {
+                    transform: translateX(-100%);
+                }
+
+                .sidebar.show {
+                    transform: translateX(0);
+                }
+
+                .main-content {
+                    margin-left: 0;
+                    padding: 1rem;
+                }
+
+                .sidebar-toggle {
+                    display: block;
+                    position: fixed;
+                    top: 1rem;
+                    left: 1rem;
+                    z-index: 1001;
+                    background: var(--primary-color);
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 0.5rem;
+                    box-shadow: var(--card-shadow);
+                }
+
+                .stats-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <button class="sidebar-toggle btn" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="admin-container">
+            <!-- Sidebar -->
+            <nav class="sidebar" id="sidebar">
+                <div class="sidebar-brand">
+                    <a href="/">
+                        <img src="/asset/logo-gunadarma.png" alt="Logo Gunadarma" style="height: 80px" />
+                    </a>
+                </div>
+                <div class="sidebar-menu">
+                    <button class="menu-item active" onclick="showSection('dashboard')">
+                        <i class="fas fa-tachometer-alt"></i>Dashboard
+                    </button>
+                    <button class="menu-item" onclick="showSection('users')">
+                        <i class="fas fa-users"></i>Manajemen Pengguna
+                    </button>
+                    <button class="menu-item" onclick="showSection('courses')">
+                        <i class="fas fa-book"></i>Manajemen Mata Kuliah
+                    </button>
+                    <button class="menu-item" onclick="showSection('reports')">
+                        <i class="fas fa-chart-bar"></i>Laporan
+                    </button>
+                    <button class="menu-item" onclick="showSection('settings')">
+                        <i class="fas fa-cog"></i>Pengaturan
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Dashboard Section -->
+                <div id="dashboard" class="content-section active">
+                    <div class="page-header">
+                        <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h2>
+                        <p class="text-muted mb-0">Selamat datang di panel admin Gunadarma</p>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stats-card">
+                            <div class="stats-number">1,245</div>
+                            <div class="stats-label">Total Mahasiswa</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-number">67</div>
+                            <div class="stats-label">Total Dosen</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-number">45</div>
+                            <div class="stats-label">Mata Kuliah</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-number">12</div>
+                            <div class="stats-label">Program Studi</div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Aktivitas Terbaru</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Waktu</th>
+                                                    <th>Aktivitas</th>
+                                                    <th>User</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>09:30</td>
+                                                    <td>Pendaftaran mahasiswa baru</td>
+                                                    <td>Ahmad Rizki</td>
+                                                    <td><span class="badge bg-success">Berhasil</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>09:15</td>
+                                                    <td>Update mata kuliah</td>
+                                                    <td>Dr. Siti Aminah</td>
+                                                    <td><span class="badge bg-info">Proses</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>08:45</td>
+                                                    <td>Login admin</td>
+                                                    <td>Admin System</td>
+                                                    <td><span class="badge bg-success">Berhasil</span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Pengumuman</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        <strong>Sistem Maintenance</strong><br />
+                                        Jadwal maintenance server: Minggu, 3 Sept 2025
+                                    </div>
+                                    <div class="alert alert-warning">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        <strong>Backup Database</strong><br />
+                                        Backup otomatis setiap hari pada 02:00 WIB
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Management Section -->
+                <div id="users" class="content-section">
+                    <div class="page-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2><i class="fas fa-users me-2"></i>Manajemen Pengguna</h2>
+                            <p class="text-muted mb-0">Kelola data pengguna sistem</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="showUserModal()">
+                            <i class="fas fa-plus me-2"></i>Tambah Pengguna
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Daftar Pengguna</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table" id="usersTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nama</th>
+                                            <th>Email</th>
+                                            <th>Role</th>
+                                            <th>Status</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="usersTableBody">
+                                        <!-- Data akan diisi oleh JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Course Management Section -->
+                <div id="courses" class="content-section">
+                    <div class="page-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2><i class="fas fa-book me-2"></i>Manajemen Mata Kuliah</h2>
+                            <p class="text-muted mb-0">Kelola data mata kuliah</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="showCourseModal()">
+                            <i class="fas fa-plus me-2"></i>Tambah Mata Kuliah
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Daftar Mata Kuliah</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table" id="coursesTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Kode</th>
+                                            <th>Nama Mata Kuliah</th>
+                                            <th>SKS</th>
+                                            <th>Semester</th>
+                                            <th>Dosen</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="coursesTableBody">
+                                        <!-- Data akan diisi oleh JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Section -->
+                <div id="reports" class="content-section">
+                    <div class="page-header">
+                        <h2><i class="fas fa-chart-bar me-2"></i>Reports</h2>
+                        <p class="text-muted mb-0">Laporan dan statistik sistem</p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Grafik Pendaftaran Bulanan</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="registrationChart" width="400" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Distribusi Role User</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="roleChart" width="400" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Section -->
+                <div id="settings" class="content-section">
+                    <div class="page-header">
+                        <h2><i class="fas fa-cog me-2"></i>Settings</h2>
+                        <p class="text-muted mb-0">Pengaturan sistem</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Pengaturan Umum</h5>
+                        </div>
+                        <div class="card-body">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Nama Universitas</label>
+                                            <input type="text" class="form-control" value="Universitas Gunadarma" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Email Admin</label>
+                                            <input type="email" class="form-control" value="admin@gunadarma.ac.id" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Tahun Akademik</label>
+                                            <select class="form-select">
+                                                <option>2025/2026</option>
+                                                <option>2024/2025</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Semester Aktif</label>
+                                            <select class="form-select">
+                                                <option>Ganjil</option>
+                                                <option>Genap</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- User Modal -->
+        <div class="modal fade" id="userModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="userModalTitle">Tambah Pengguna</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="userForm">
+                            <input type="hidden" id="userId" />
+                            <div class="mb-3">
+                                <label class="form-label">Nama Lengkap</label>
+                                <input type="text" class="form-control" id="userName" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" id="userEmail" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Role</label>
+                                <select class="form-select" id="userRole" required>
+                                    <option value="">Pilih Role</option>
+                                    <option value="mahasiswa">Mahasiswa</option>
+                                    <option value="dosen">Dosen</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" id="userStatus" required>
+                                    <option value="aktif">Aktif</option>
+                                    <option value="nonaktif">Non-aktif</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="button" class="btn btn-primary" onclick="saveUser()">Simpan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course Modal -->
+        <div class="modal fade" id="courseModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="courseModalTitle">Tambah Mata Kuliah</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="courseForm">
+                            <input type="hidden" id="courseId" />
+                            <div class="mb-3">
+                                <label class="form-label">Kode Mata Kuliah</label>
+                                <input type="text" class="form-control" id="courseCode" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Nama Mata Kuliah</label>
+                                <input type="text" class="form-control" id="courseName" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">SKS</label>
+                                <select class="form-select" id="courseSKS" required>
+                                    <option value="">Pilih SKS</option>
+                                    <option value="1">1 SKS</option>
+                                    <option value="2">2 SKS</option>
+                                    <option value="3">3 SKS</option>
+                                    <option value="4">4 SKS</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Semester</label>
+                                <select class="form-select" id="courseSemester" required>
+                                    <option value="">Pilih Semester</option>
+                                    <option value="1">Semester 1</option>
+                                    <option value="2">Semester 2</option>
+                                    <option value="3">Semester 3</option>
+                                    <option value="4">Semester 4</option>
+                                    <option value="5">Semester 5</option>
+                                    <option value="6">Semester 6</option>
+                                    <option value="7">Semester 7</option>
+                                    <option value="8">Semester 8</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Dosen Pengampu</label>
+                                <input type="text" class="form-control" id="courseLecturer" required />
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="button" class="btn btn-primary" onclick="saveCourse()">Simpan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+        <script>
+            // Data dummy
+            let users = [
+                {
+                    id: 1,
+                    name: "Ahmad Rizki",
+                    email: "ahmad.rizki@student.gunadarma.ac.id",
+                    role: "mahasiswa",
+                    status: "aktif",
+                },
+                {
+                    id: 2,
+                    name: "Dr. Siti Aminah",
+                    email: "siti.aminah@staff.gunadarma.ac.id",
+                    role: "dosen",
+                    status: "aktif",
+                },
+                {
+                    id: 3,
+                    name: "Budi Santoso",
+                    email: "budi.santoso@student.gunadarma.ac.id",
+                    role: "mahasiswa",
+                    status: "aktif",
+                },
+                {
+                    id: 4,
+                    name: "Prof. Ir. Sugiarto",
+                    email: "sugiarto@staff.gunadarma.ac.id",
+                    role: "dosen",
+                    status: "aktif",
+                },
+                { id: 5, name: "Admin System", email: "admin@gunadarma.ac.id", role: "admin", status: "aktif" },
+            ];
+
+            let courses = [
+                {
+                    id: 1,
+                    code: "IF101",
+                    name: "Algoritma dan Pemrograman",
+                    sks: 3,
+                    semester: 1,
+                    lecturer: "Dr. Siti Aminah",
+                },
+                { id: 2, code: "IF201", name: "Struktur Data", sks: 3, semester: 2, lecturer: "Prof. Ir. Sugiarto" },
+                { id: 3, code: "IF301", name: "Basis Data", sks: 3, semester: 3, lecturer: "Dr. Ahmad Rahman" },
+                {
+                    id: 4,
+                    code: "IF401",
+                    name: "Rekayasa Perangkat Lunak",
+                    sks: 3,
+                    semester: 4,
+                    lecturer: "Dr. Siti Aminah",
+                },
+                { id: 5, code: "MT101", name: "Kalkulus I", sks: 4, semester: 1, lecturer: "Dr. Bambang Wijaya" },
+            ];
+
+            let nextUserId = 6;
+            let nextCourseId = 6;
+
+            // Navigation functions
+            function showSection(sectionId) {
+                // Hide all sections
+                document.querySelectorAll(".content-section").forEach((section) => {
+                    section.classList.remove("active");
+                });
+
+                // Remove active class from all menu items
+                document.querySelectorAll(".menu-item").forEach((item) => {
+                    item.classList.remove("active");
+                });
+
+                // Show selected section
+                document.getElementById(sectionId).classList.add("active");
+
+                // Add active class to clicked menu item
+                event.target.classList.add("active");
+
+                // Load data based on section
+                if (sectionId === "users") {
+                    loadUsers();
+                } else if (sectionId === "courses") {
+                    loadCourses();
+                } else if (sectionId === "reports") {
+                    initCharts();
+                }
+            }
+
+            function toggleSidebar() {
+                document.getElementById("sidebar").classList.toggle("show");
+            }
+
+            // User Management Functions
+            function loadUsers() {
+                const tbody = document.getElementById("usersTableBody");
+                tbody.innerHTML = "";
+
+                users.forEach((user) => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>
+                        <span class="badge bg-${getRoleBadgeColor(user.role)}">${capitalizeFirst(user.role)}</span>
+                    </td>
+                    <td>
+                        <span class="badge bg-${user.status === "aktif" ? "success" : "danger"}">${capitalizeFirst(
+                        user.status
+                    )}</span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="editUser(${user.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteUser(${user.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                    tbody.appendChild(row);
+                });
+            }
+
+            function showUserModal(userId = null) {
+                const modal = new bootstrap.Modal(document.getElementById("userModal"));
+                const title = document.getElementById("userModalTitle");
+                const form = document.getElementById("userForm");
+
+                if (userId) {
+                    const user = users.find((u) => u.id === userId);
+                    title.textContent = "Edit User";
+                    document.getElementById("userId").value = user.id;
+                    document.getElementById("userName").value = user.name;
+                    document.getElementById("userEmail").value = user.email;
+                    document.getElementById("userRole").value = user.role;
+                    document.getElementById("userStatus").value = user.status;
+                } else {
+                    title.textContent = "Tambah Pengguna";
+                    form.reset();
+                    document.getElementById("userId").value = "";
+                }
+
+                modal.show();
+            }
+
+            function saveUser() {
+                const userId = document.getElementById("userId").value;
+                const userData = {
+                    name: document.getElementById("userName").value,
+                    email: document.getElementById("userEmail").value,
+                    role: document.getElementById("userRole").value,
+                    status: document.getElementById("userStatus").value,
+                };
+
+                if (userId) {
+                    // Edit existing user
+                    const userIndex = users.findIndex((u) => u.id === parseInt(userId));
+                    users[userIndex] = { ...users[userIndex], ...userData };
+                } else {
+                    // Add new user
+                    userData.id = nextUserId++;
+                    users.push(userData);
+                }
+
+                loadUsers();
+                bootstrap.Modal.getInstance(document.getElementById("userModal")).hide();
+            }
+
+            function editUser(userId) {
+                showUserModal(userId);
+            }
+
+            function deleteUser(userId) {
+                if (confirm("Apakah Anda yakin ingin menghapus user ini?")) {
+                    users = users.filter((u) => u.id !== userId);
+                    loadUsers();
+                }
+            }
+
+            // Course Management Functions
+            function loadCourses() {
+                const tbody = document.getElementById("coursesTableBody");
+                tbody.innerHTML = "";
+
+                courses.forEach((course) => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                    <td><strong>${course.code}</strong></td>
+                    <td>${course.name}</td>
+                    <td>${course.sks} SKS</td>
+                    <td>Semester ${course.semester}</td>
+                    <td>${course.lecturer}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="editCourse(${course.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteCourse(${course.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                    tbody.appendChild(row);
+                });
+            }
+
+            function showCourseModal(courseId = null) {
+                const modal = new bootstrap.Modal(document.getElementById("courseModal"));
+                const title = document.getElementById("courseModalTitle");
+                const form = document.getElementById("courseForm");
+
+                if (courseId) {
+                    const course = courses.find((c) => c.id === courseId);
+                    title.textContent = "Edit Mata Kuliah";
+                    document.getElementById("courseId").value = course.id;
+                    document.getElementById("courseCode").value = course.code;
+                    document.getElementById("courseName").value = course.name;
+                    document.getElementById("courseSKS").value = course.sks;
+                    document.getElementById("courseSemester").value = course.semester;
+                    document.getElementById("courseLecturer").value = course.lecturer;
+                } else {
+                    title.textContent = "Tambah Mata Kuliah";
+                    form.reset();
+                    document.getElementById("courseId").value = "";
+                }
+
+                modal.show();
+            }
+
+            function saveCourse() {
+                const courseId = document.getElementById("courseId").value;
+                const courseData = {
+                    code: document.getElementById("courseCode").value,
+                    name: document.getElementById("courseName").value,
+                    sks: parseInt(document.getElementById("courseSKS").value),
+                    semester: parseInt(document.getElementById("courseSemester").value),
+                    lecturer: document.getElementById("courseLecturer").value,
+                };
+
+                if (courseId) {
+                    // Edit existing course
+                    const courseIndex = courses.findIndex((c) => c.id === parseInt(courseId));
+                    courses[courseIndex] = { ...courses[courseIndex], ...courseData };
+                } else {
+                    // Add new course
+                    courseData.id = nextCourseId++;
+                    courses.push(courseData);
+                }
+
+                loadCourses();
+                bootstrap.Modal.getInstance(document.getElementById("courseModal")).hide();
+            }
+
+            function editCourse(courseId) {
+                showCourseModal(courseId);
+            }
+
+            function deleteCourse(courseId) {
+                if (confirm("Apakah Anda yakin ingin menghapus mata kuliah ini?")) {
+                    courses = courses.filter((c) => c.id !== courseId);
+                    loadCourses();
+                }
+            }
+
+            // Utility functions
+            function getRoleBadgeColor(role) {
+                switch (role) {
+                    case "admin":
+                        return "danger";
+                    case "dosen":
+                        return "warning";
+                    case "mahasiswa":
+                        return "info";
+                    default:
+                        return "secondary";
+                }
+            }
+
+            function capitalizeFirst(str) {
+                return str.charAt(0).toUpperCase() + str.slice(1);
+            }
+
+            // Chart initialization
+            function initCharts() {
+                // Registration Chart
+                const registrationCtx = document.getElementById("registrationChart");
+                if (registrationCtx) {
+                    new Chart(registrationCtx, {
+                        type: "line",
+                        data: {
+                            labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun"],
+                            datasets: [
+                                {
+                                    label: "Pendaftaran Mahasiswa",
+                                    data: [65, 89, 120, 98, 145, 167],
+                                    borderColor: "rgb(37, 99, 235)",
+                                    backgroundColor: "rgba(37, 99, 235, 0.1)",
+                                    tension: 0.4,
+                                },
+                            ],
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false,
+                                },
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                },
+                            },
+                        },
+                    });
+                }
+
+                // Role Distribution Chart
+                const roleCtx = document.getElementById("roleChart");
+                if (roleCtx) {
+                    new Chart(roleCtx, {
+                        type: "doughnut",
+                        data: {
+                            labels: ["Mahasiswa", "Dosen", "Admin"],
+                            datasets: [
+                                {
+                                    data: [1200, 67, 8],
+                                    backgroundColor: ["rgb(59, 130, 246)", "rgb(251, 191, 36)", "rgb(239, 68, 68)"],
+                                },
+                            ],
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: "bottom",
+                                },
+                            },
+                        },
+                    });
+                }
+            }
+
+            // Initialize page
+            document.addEventListener("DOMContentLoaded", function () {
+                loadUsers();
+                loadCourses();
+            });
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener("click", function (e) {
+                const sidebar = document.getElementById("sidebar");
+                const toggle = document.querySelector(".sidebar-toggle");
+
+                if (
+                    window.innerWidth <= 768 &&
+                    !sidebar.contains(e.target) &&
+                    !toggle.contains(e.target) &&
+                    sidebar.classList.contains("show")
+                ) {
+                    sidebar.classList.remove("show");
+                }
+            });
+        </script>
+    </body>
+</html>

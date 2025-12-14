@@ -1,0 +1,431 @@
+<%- include('partials/hero') %> <%- include('partials/stats-cards') %> <%- include('partials/charts') %> <%-
+include('partials/projects') %>
+
+<script>
+    async function fetchChartData() {
+        try {
+            const response = await fetch("/api/chart-data?type=yearly");
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Error fetching chart data:", error);
+            return null;
+        }
+    }
+    async function initCharts() {
+        const chartData = await fetchChartData();
+        const nationalKeys =
+            chartData.data.nasional &&
+            Object.values(chartData.data.nasional)
+                .flat()
+                .map((item) => item.rank)
+                .filter((rank, index, self) => self.indexOf(rank) === index)
+                .sort();
+        const objAccNational = {};
+        nationalKeys.forEach((key) => {
+            objAccNational[key] = 0;
+        });
+        const nationalYearlyData = chartData.data.nasional
+            ? Object.values(chartData.data.nasional)
+                  .flat()
+                  .reduce((acc, item) => {
+                      acc[item.rank] = (acc[item.rank] || 0) + item.count;
+                      return acc;
+                  }, objAccNational)
+            : objAccNational;
+        const nationalCtx = document.getElementById("nationalChart");
+        const colors = [
+            "FFC107",
+            "FF9900",
+            "FF69B4",
+            "9C27B0",
+            "673AB7",
+            "3F51B5",
+            "2196F3",
+            "03A9F4",
+            "00BCD4",
+            "009688",
+            "4CAF50",
+            "8BC34A",
+            "CDDC39",
+        ];
+        const nationalBackgroundColors = [];
+        nationalKeys.forEach(() => {
+            const color = colors.splice(Math.floor(Math.random() * colors.length), 1)[0];
+            nationalBackgroundColors.push(`#${color}`);
+        });
+        if (nationalCtx && nationalKeys.length > 0) {
+            new Chart(nationalCtx, {
+                type: "pie",
+                data: {
+                    labels: nationalKeys,
+                    datasets: [
+                        {
+                            data: Object.values(nationalYearlyData),
+                            backgroundColor: nationalBackgroundColors,
+                            borderWidth: 0,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: "right",
+                        },
+                    },
+                },
+            });
+        } else {
+            const container = document.getElementById("nationalChart");
+            if (container) {
+                container.style.display = "none";
+            }
+            container.parentNode.innerHTML = '<div class="text-center text-muted">Belum ada data</div>';
+        }
+        const nationalTableBody = document.getElementById("nationalTableBody");
+        if (nationalTableBody) {
+            const keys = Object.keys(nationalYearlyData);
+            keys.forEach((key, index) => {
+                const row = document.createElement("tr");
+                const rankCell = document.createElement("td");
+                const rankCellContent = document.createElement("div");
+                rankCellContent.style.color = "white";
+                rankCellContent.style.backgroundColor = nationalBackgroundColors[keys.indexOf(key)];
+                rankCellContent.style.borderRadius = "5px";
+                rankCellContent.style.paddingLeft = "5px";
+                rankCellContent.textContent = key;
+                rankCell.appendChild(rankCellContent);
+                const countCell = document.createElement("td");
+                countCell.textContent = nationalYearlyData[key];
+                const percentageCell = document.createElement("td");
+                const percentage =
+                    (nationalYearlyData[key] / Object.values(nationalYearlyData).reduce((a, b) => a + b, 0)) * 100;
+                percentageCell.textContent = percentage % 1 === 0 ? `${percentage}%` : `${percentage.toFixed(2)}` + "%";
+                row.appendChild(rankCell);
+                row.appendChild(countCell);
+                row.appendChild(percentageCell);
+                nationalTableBody.appendChild(row);
+            });
+            const footRows = nationalTable.tFoot.rows;
+            const total = keys.reduce((acc, key) => acc + nationalYearlyData[key], 0);
+            footRows[0].cells[1].textContent = total;
+            footRows[0].cells[2].textContent = `100%`;
+        }
+
+        const internationalKeys =
+            chartData.data.internasional &&
+            Object.values(chartData.data.internasional)
+                .flat()
+                .map((item) => item.institutionName)
+                .filter((institutionName, index, self) => self.indexOf(institutionName) === index)
+                .sort();
+        const objAccInternational = {};
+        internationalKeys.forEach((key) => {
+            objAccInternational[key] = 0;
+        });
+        const internationalYearlyData = chartData.data.internasional
+            ? Object.values(chartData.data.internasional)
+                  .flat()
+                  .reduce((acc, item) => {
+                      acc[item.institutionName] = (acc[item.institutionName] || 0) + item.count;
+                      return acc;
+                  }, objAccInternational)
+            : objAccInternational;
+        const internationalBackgroundColors = [];
+        internationalKeys.forEach(() => {
+            const color = colors.splice(Math.floor(Math.random() * colors.length), 1)[0];
+            internationalBackgroundColors.push(`#${color}`);
+        });
+        const internationalCtx = document.getElementById("internationalChart");
+        if (internationalCtx && internationalKeys.length > 0) {
+            new Chart(internationalCtx, {
+                type: "pie",
+                data: {
+                    labels: internationalKeys,
+                    datasets: [
+                        {
+                            data: Object.values(internationalYearlyData),
+                            backgroundColor: internationalBackgroundColors,
+                            borderWidth: 0,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: "right",
+                        },
+                    },
+                },
+            });
+        } else {
+            const container = document.getElementById("internationalChart");
+            if (container) {
+                container.style.display = "none";
+            }
+            container.parentNode.innerHTML = '<div class="text-center text-muted">Belum ada data</div>';
+        }
+
+        const internationalTableBody = document.getElementById("internationalTableBody");
+        if (internationalTableBody) {
+            const keys = Object.keys(internationalYearlyData);
+            keys.forEach((key) => {
+                const row = document.createElement("tr");
+                const rankCell = document.createElement("td");
+                const rankCellContent = document.createElement("div");
+                rankCellContent.style.color = "white";
+                rankCellContent.style.backgroundColor = internationalBackgroundColors[keys.indexOf(key)];
+                rankCellContent.style.borderRadius = "5px";
+                rankCellContent.style.paddingLeft = "5px";
+                rankCellContent.textContent = key;
+                rankCell.appendChild(rankCellContent);
+                const countCell = document.createElement("td");
+                countCell.textContent = internationalYearlyData[key];
+                const percentageCell = document.createElement("td");
+                const percentage =
+                    (internationalYearlyData[key] / Object.values(internationalYearlyData).reduce((a, b) => a + b, 0)) *
+                    100;
+                percentageCell.textContent = percentage % 1 === 0 ? `${percentage}%` : `${percentage.toFixed(2)}` + "%";
+                row.appendChild(rankCell);
+                row.appendChild(countCell);
+                row.appendChild(percentageCell);
+                internationalTableBody.appendChild(row);
+            });
+            const footRows = internationalTable.tFoot.rows;
+            const total = keys.reduce((acc, key) => acc + internationalYearlyData[key], 0);
+            footRows[0].cells[1].textContent = total;
+            footRows[0].cells[2].textContent = "100%";
+        }
+
+        const nationalInstitutionKeys =
+            chartData.data.nasionalInstitution &&
+            Object.values(chartData.data.nasionalInstitution)
+                .flat()
+                .map((item) => item.institutionName)
+                .filter((institutionName, index, self) => self.indexOf(institutionName) === index)
+                .sort();
+        const objAccNationalInstitution = {};
+        nationalInstitutionKeys.forEach((key) => {
+            objAccNationalInstitution[key] = 0;
+        });
+        const nationalInstitutionYearlyData = chartData.data.nasionalInstitution
+            ? Object.values(chartData.data.nasionalInstitution)
+                  .flat()
+                  .reduce((acc, item) => {
+                      acc[item.institutionName] = (acc[item.institutionName] || 0) + item.count;
+                      return acc;
+                  }, objAccNationalInstitution)
+            : objAccNationalInstitution;
+        const nationalInstitutionBackgroundColors = [];
+        nationalInstitutionKeys.forEach(() => {
+            const color = colors.splice(Math.floor(Math.random() * colors.length), 1)[0];
+            nationalInstitutionBackgroundColors.push(`#${color}`);
+        });
+        const institutionalCtx = document.getElementById("institutionalChart");
+        if (institutionalCtx && nationalInstitutionKeys.length > 0) {
+            new Chart(institutionalCtx, {
+                type: "pie",
+                data: {
+                    labels: nationalInstitutionKeys,
+                    datasets: [
+                        {
+                            data: Object.values(nationalInstitutionYearlyData),
+                            backgroundColor: nationalInstitutionBackgroundColors,
+                            borderWidth: 0,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: "right",
+                        },
+                    },
+                },
+            });
+        } else {
+            const container = document.getElementById("institutionalChart");
+            if (container) {
+                container.style.display = "none";
+            }
+            container.parentNode.innerHTML = '<div class="text-center text-muted">Belum ada data</div>';
+        }
+
+        const institutionalTableBody = document.getElementById("institutionalTableBody");
+        if (institutionalTableBody) {
+            const keys = Object.keys(nationalInstitutionYearlyData);
+            keys.forEach((key) => {
+                const row = document.createElement("tr");
+                const rankCell = document.createElement("td");
+                const rankCellContent = document.createElement("div");
+                rankCellContent.style.color = "white";
+                rankCellContent.style.backgroundColor = nationalInstitutionBackgroundColors[keys.indexOf(key)];
+                rankCellContent.style.borderRadius = "5px";
+                rankCellContent.style.paddingLeft = "5px";
+                rankCellContent.textContent = key;
+                rankCell.appendChild(rankCellContent);
+                const countCell = document.createElement("td");
+                countCell.textContent = nationalInstitutionYearlyData[key];
+                const percentageCell = document.createElement("td");
+                const percentage =
+                    (nationalInstitutionYearlyData[key] /
+                        Object.values(nationalInstitutionYearlyData).reduce((a, b) => a + b, 0)) *
+                    100;
+                percentageCell.textContent = percentage % 1 === 0 ? `${percentage}%` : `${percentage.toFixed(2)}` + "%";
+                row.appendChild(rankCell);
+                row.appendChild(countCell);
+                row.appendChild(percentageCell);
+                institutionalTableBody.appendChild(row);
+            });
+            const footRows = institutionalTable.tFoot.rows;
+            const total = keys.reduce((acc, key) => acc + nationalInstitutionYearlyData[key], 0);
+            footRows[0].cells[1].textContent = total;
+            footRows[0].cells[2].textContent = "100%";
+        }
+
+        const projectionExpiringKeys =
+            chartData.data.projectionExpiring && Object.keys(chartData.data.projectionExpiring);
+        const projectionExpiringBackgroundColors = ["#ef4444", "#f97316", "#eab308", "#06b6d4", "#3b82f6"];
+        const projectionCtx = document.getElementById("projectionChart");
+        if (projectionCtx) {
+            new Chart(projectionCtx, {
+                type: "bar",
+                data: {
+                    labels: projectionExpiringKeys,
+                    datasets: [
+                        {
+                            label: "Program Studi Berakhir",
+                            data: Object.values(chartData.data.projectionExpiring),
+                            backgroundColor: projectionExpiringBackgroundColors,
+                            borderRadius: 8,
+                            borderSkipped: false,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: "rgba(0, 0, 0, 0.1)",
+                            },
+                        },
+                        x: {
+                            grid: {
+                                display: false,
+                            },
+                        },
+                    },
+                },
+            });
+        }
+        const timelineCards = document.getElementById("timelineCards");
+        if (projectionExpiringKeys && timelineCards) {
+            projectionExpiringKeys.forEach((key, index) => {
+                const card = document.createElement("div");
+                card.classList.add("col-md-3");
+                const cardInner = document.createElement("div");
+                cardInner.classList.add("card", "text-center", "border-0");
+                cardInner.style.background = `linear-gradient(135deg, ${projectionExpiringBackgroundColors[index]}, ${projectionExpiringBackgroundColors[index]})`;
+                cardInner.style.color = "white";
+                const cardBody = document.createElement("div");
+                cardBody.classList.add("card-body");
+                const cardTitle = document.createElement("h6");
+                cardTitle.classList.add("card-title", "mb-3");
+                cardTitle.innerHTML = `<i class="fas fa-calendar-alt me-2"></i> ${key}`;
+                const statsNumber = document.createElement("div");
+                statsNumber.classList.add("stats-number");
+                statsNumber.style.fontSize = "2rem";
+                statsNumber.textContent = chartData.data.projectionExpiring[key];
+                const small = document.createElement("small");
+                small.textContent = "Program Studi Berakhir";
+                cardBody.appendChild(cardTitle);
+                cardBody.appendChild(statsNumber);
+                cardBody.appendChild(small);
+                cardInner.appendChild(cardBody);
+                card.appendChild(cardInner);
+                timelineCards.appendChild(card);
+            });
+        }
+
+        generateFacultyCards(chartData.data.facultyProjection);
+
+        function generateFacultyCards(facultyData) {
+            const container = document.getElementById("facultyDetailCards");
+            const currentYear = new Date().getFullYear();
+
+            let cardsHTML = "";
+            for (let year = currentYear; year <= currentYear + 3; year++) {
+                const yearData = facultyData[year] || [];
+                const totalProdi = yearData.reduce((sum, item) => sum + item.count, 0);
+
+                if (totalProdi > 0) {
+                    cardsHTML += `
+                        <div class="col-lg-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: black;">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-calendar-alt me-2"></i>
+                                        Detail Tahun ${year} (${totalProdi} Prodi)
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="mb-3">Top 3 Fakultas dengan Akreditasi Berakhir:</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-borderless">
+                                            <thead>
+                                                <tr class="border-bottom">
+                                                    <th>Fakultas</th>
+                                                    <th class="text-end">Jumlah Prodi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                    `;
+
+                    yearData.forEach((item, index) => {
+                        const badgeColors = ["danger", "warning", "info"];
+                        const badgeColor = badgeColors[index] || "secondary";
+
+                        cardsHTML += `
+                            <tr>
+                                <td class="fw-medium">${item.facultyName}</td>
+                                <td class="text-end">
+                                    <span class="badge bg-${badgeColor}">${item.count}</span>
+                                </td>
+                            </tr>
+                        `;
+                    });
+
+                    cardsHTML += `
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <a class="btn btn-outline-primary btn-sm" href="/akreditasi">
+                                            <i class="fas fa-eye me-2"></i>
+                                            Lihat Detail Lengkap
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            container.innerHTML = cardsHTML;
+        }
+    }
+</script>
