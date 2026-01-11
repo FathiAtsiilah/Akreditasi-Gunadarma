@@ -251,7 +251,11 @@
                 { 
                     data: null,
                     render: function(data, type, row) {
-                        const documentsCount = row.data?.documents?.length || 0;
+                        let documentsCount = row.data?.documents?.length || 0;
+                        // Jika user adalah STUDY_PROGRAM, hitung hanya dokumen Sertifikat
+                        if (userRoleCode === 'STUDY_PROGRAM' && row.data?.documents) {
+                            documentsCount = row.data.documents.filter(doc => !doc.type || doc.type === 'Sertifikat').length;
+                        }
                         return `<button class="btn btn-sm btn-outline-info" onclick="viewDocuments(${row.id})" title="Lihat Dokumen">
                             <i class="fas fa-file-alt"></i> (${documentsCount})
                         </button>`;
@@ -421,6 +425,7 @@
             const typeSelect = div.querySelector('.document-type');
             if (typeSelect) {
                 typeSelect.value = type;
+                console.log('Setting document type to:', type, 'Selected value:', typeSelect.value); // Debug
             }
         }
     }
@@ -536,6 +541,8 @@
                     file: currentFile,
                 };
 
+                console.log('Document data being saved:', docData); // Debug
+
                 if (fileInput.files[0]) {
                     formData.append("documents", fileInput.files[0]);
                     docData.fileIndex = fileIndex;
@@ -546,6 +553,7 @@
             }
         });
 
+        console.log('All documents data:', documents); // Debug
         formData.append("documentsData", JSON.stringify(documents));
 
         try {
@@ -636,30 +644,42 @@
             
             console.log('Rendering documents:', accreditation.data.documents); // Debug
             
-            accreditation.data.documents.forEach((doc, index) => {
-                const div = document.createElement("div");
-                div.className = "d-flex justify-content-between align-items-center p-3 border rounded mb-2";
-                const docType = doc.type || 'Tidak ada tipe';
-                const badgeClass = doc.type === 'Sertifikat' ? 'bg-success' : 'bg-info';
-                div.innerHTML = `
-                    <div>
-                        <h6 class="mb-1">
-                            ${doc.name || 'Dokumen ' + (index + 1)}
-                            <span class="badge ${badgeClass} ms-2">${docType}</span>
-                        </h6>
-                        <small class="text-muted">${doc.file || 'No file'}</small>
-                    </div>
-                    <div>
-                        <a href="${doc.file}" target="_blank" class="btn btn-sm btn-outline-primary me-2" title="Lihat">
-                            <i class="fas fa-eye"></i>
-                        </a>
-                        <a href="${doc.file}" download class="btn btn-sm btn-outline-success" title="Download">
-                            <i class="fas fa-download"></i>
-                        </a>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
+            // Filter dokumen berdasarkan role user
+            // Jika STUDY_PROGRAM, hanya tampilkan Sertifikat (bukan SK)
+            let documentsToShow = accreditation.data.documents;
+            if (userRoleCode === 'STUDY_PROGRAM') {
+                // Filter hanya dokumen Sertifikat atau dokumen tanpa type
+                documentsToShow = accreditation.data.documents.filter(doc => !doc.type || doc.type === 'Sertifikat');
+            }
+            
+            if (documentsToShow.length > 0) {
+                documentsToShow.forEach((doc, index) => {
+                    const div = document.createElement("div");
+                    div.className = "d-flex justify-content-between align-items-center p-3 border rounded mb-2";
+                    const docType = doc.type || '-';
+                    const badgeClass = doc.type === 'Sertifikat' ? 'bg-success' : (doc.type === 'SK' ? 'bg-info' : 'bg-secondary');
+                    div.innerHTML = `
+                        <div>
+                            <h6 class="mb-1">
+                                ${doc.name || 'Dokumen ' + (index + 1)}
+                                <span class="badge ${badgeClass} ms-2">${docType}</span>
+                            </h6>
+                            <small class="text-muted">${doc.file || 'No file'}</small>
+                        </div>
+                        <div>
+                            <a href="${doc.file}" target="_blank" class="btn btn-sm btn-outline-primary me-2" title="Lihat">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="${doc.file}" download class="btn btn-sm btn-outline-success" title="Download">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            } else {
+                container.innerHTML = '<div class="text-center text-muted p-4">Tidak ada dokumen yang dapat diakses</div>';
+            }
         } else {
             console.log('No documents found or invalid structure'); // Debug
             container.innerHTML = '<div class="text-center text-muted p-4">Tidak ada dokumen</div>';

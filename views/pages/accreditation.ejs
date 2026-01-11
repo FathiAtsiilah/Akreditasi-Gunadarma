@@ -743,9 +743,12 @@
             const expiredDate = new Date(item.expired_on);
             const today = new Date();
             const isExpiringSoon = (expiredDate - today) / (1000 * 60 * 60 * 24) <= 180; // 6 months
-            const data = item.data;
+            // Parse data if it's a string (from database JSON field)
+            const parsedData = typeof item.data === 'string' ? JSON.parse(item.data) : item.data;
             // Count only "Sertifikat" type documents for student view
-            const certificateCount = data?.documents?.filter(doc => doc.type === 'Sertifikat').length || 0;
+            // Include documents without type (old data, assumed to be certificates)
+            const allDocuments = parsedData?.documents || [];
+            const certificateCount = allDocuments.filter(doc => !doc.type || doc.type === 'Sertifikat').length;
             const date = new Date(item.year);
             const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
             html += `
@@ -1159,11 +1162,11 @@
     }
 
        function viewDocuments(accreditationId) {
-        const accreditation = (accreditations.find((a) => a.id === accreditationId));
-        const accreditationData = accreditation?.data;
+        const accreditation = accreditations.find((a) => a.id === accreditationId);
         const modal = new bootstrap.Modal(document.getElementById("documentsModal"));
         const container = document.getElementById("documentsListView");
-        container.innerHTML = "";   
+
+        container.innerHTML = "";
 
         if (!accreditation) {
             container.innerHTML = '<div class="alert alert-warning">Akreditasi tidak ditemukan</div>';
@@ -1171,25 +1174,29 @@
             return;
         }
 
-        if (accreditationData && 
-            accreditationData.documents && 
-            Array.isArray(accreditationData.documents) && 
-            accreditationData.documents.length > 0) {
-            
-            console.log('Rendering documents:', accreditationData.documents); // Debug
+        // Parse data if it's a string (from database JSON field)
+        const parsedData = typeof accreditation.data === 'string' ? JSON.parse(accreditation.data) : accreditation.data;
+
+        if (parsedData && 
+            parsedData.documents && 
+            Array.isArray(parsedData.documents) && 
+            parsedData.documents.length > 0) {
             
             // Filter hanya dokumen tipe "Sertifikat" untuk tampilan mahasiswa
-            const certificateDocuments = accreditationData.documents.filter(doc => doc.type === 'Sertifikat');
+            // Include documents without type (old data, assumed to be certificates)
+            const certificateDocuments = parsedData.documents.filter(doc => !doc.type || doc.type === 'Sertifikat');
             
             if (certificateDocuments.length > 0) {
                 certificateDocuments.forEach((doc, index) => {
                     const div = document.createElement("div");
                     div.className = "d-flex justify-content-between align-items-center p-3 border rounded mb-2";
+                    const docType = doc.type || '-';
+                    const badgeClass = doc.type ? 'bg-success' : 'bg-secondary';
                     div.innerHTML = `
                         <div>
                             <h6 class="mb-1">
-                                ${doc.name || 'Sertifikat ' + (index + 1)}
-                                <span class="badge bg-success ms-2">Sertifikat</span>
+                                ${doc.name || 'Dokumen ' + (index + 1)}
+                                <span class="badge ${badgeClass} ms-2">${docType}</span>
                             </h6>
                             <small class="text-muted">${doc.file || 'No file'}</small>
                         </div>
@@ -1208,7 +1215,6 @@
                 container.innerHTML = '<div class="text-center text-muted p-4">Tidak ada sertifikat akreditasi</div>';
             }
         } else {
-            console.log('No documents found or invalid structure'); // Debug
             container.innerHTML = '<div class="text-center text-muted p-4">Tidak ada dokumen</div>';
         }
 

@@ -89,6 +89,7 @@ module.exports = {
          if (documentsData) {
             try {
                const parsedDocumentsData = JSON.parse(documentsData);
+               console.log('Received documents data:', parsedDocumentsData); // Debug
 
                documents = parsedDocumentsData.map((doc, index) => {
                   // If new file uploaded for this document
@@ -96,12 +97,14 @@ module.exports = {
                      const file = req.files[doc.fileIndex];
                      return {
                         name: doc.name,
+                        type: doc.type || '',
                         file: `/documents/${file.filename}`
                      };
                   }
                   // Keep existing file path
                   return {
                      name: doc.name,
+                     type: doc.type || '',
                      file: doc.file || ''
                   };
                });
@@ -214,6 +217,7 @@ module.exports = {
          if (documentsData) {
             try {
                const parsedDocumentsData = JSON.parse(documentsData);
+               console.log('Received documents data (update):', parsedDocumentsData); // Debug
 
                documents = parsedDocumentsData.map((doc, index) => {
                   // If new file uploaded for this document
@@ -231,12 +235,14 @@ module.exports = {
 
                      return {
                         name: doc.name,
+                        type: doc.type || '',
                         file: `/documents/${file.filename}`
                      };
                   }
                   // Keep existing file path
                   return {
                      name: doc.name,
+                     type: doc.type || '',
                      file: doc.file || ''
                   };
                });

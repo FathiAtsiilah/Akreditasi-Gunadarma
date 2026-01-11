@@ -9,11 +9,12 @@ const cronJobs = new Map();
 module.exports = {
    // Initialize notification system
    initializeNotificationSystem: () => {
-      // Check expired accreditations daily at 9 AM
-      cron.schedule("0 9 1 * *", async () => {
-         console.log("🕛 Mengecek akreditasi yang 6 bulan sebelum habis masa berlaku...");
+      // Check expiring accreditations every Monday at 9 AM (weekly)
+      cron.schedule("0 9 * * 1", async () => {
+         console.log("🕛 Mengecek akreditasi yang 6 bulan sebelum habis masa berlaku (mingguan - setiap Senin)...");
          await module.exports.checkExpiringAccreditations();
       });
+      // Check expired accreditations on the 1st of every month at midnight
       cron.schedule("0 0 1 * *", async () => {
          console.log("🕛 Mengecek akreditasi yang sudah lewat masa berlaku...");
          await module.exports.deactivateExpiredAccreditations();
