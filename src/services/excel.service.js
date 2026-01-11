@@ -84,6 +84,89 @@ class ExcelService {
          };
       });
    }
+
+   async exportAccreditationsToExcel(accreditations) {
+      try {
+         const workbook = new ExcelJS.Workbook();
+         const worksheet = workbook.addWorksheet("Data Akreditasi");
+
+         // Set column headers
+         worksheet.columns = [
+            { header: "No", key: "no", width: 5 },
+            { header: "Kode", key: "code", width: 20 },
+            { header: "Program Studi", key: "major_name", width: 35 },
+            { header: "Jenjang", key: "level", width: 12 },
+            { header: "Fakultas", key: "faculty_name", width: 30 },
+            { header: "Peringkat", key: "rank", width: 15 },
+            { header: "Tanggal Berlaku", key: "year", width: 15 },
+            { header: "Tanggal Berakhir", key: "expired_on", width: 15 },
+            { header: "Lembaga", key: "institution_name", width: 25 },
+            { header: "Tipe Lembaga", key: "institution_type", width: 15 },
+            { header: "Status", key: "active", width: 12 },
+         ];
+
+         // Style header row
+         worksheet.getRow(1).font = { bold: true, color: { argb: "FFFFFFFF" } };
+         worksheet.getRow(1).fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: { argb: "FF4472C4" },
+         };
+         worksheet.getRow(1).alignment = { vertical: "middle", horizontal: "center" };
+
+         // Add data rows
+         accreditations.forEach((acc, index) => {
+            const row = worksheet.addRow({
+               no: index + 1,
+               code: acc.code || "-",
+               major_name: acc.major?.name || "-",
+               level: acc.major?.level || "-",
+               faculty_name: acc.major?.faculty?.name || "-",
+               rank: acc.rank || "-",
+               year: acc.year ? new Date(acc.year).toLocaleDateString("id-ID") : "-",
+               expired_on: acc.expired_on ? new Date(acc.expired_on).toLocaleDateString("id-ID") : "-",
+               institution_name: acc.institution?.name || "-",
+               institution_type: acc.institution?.type || "-",
+               active: acc.active ? "Aktif" : "Tidak Aktif",
+            });
+
+            // Alternate row colors
+            if (index % 2 === 0) {
+               row.fill = {
+                  type: "pattern",
+                  pattern: "solid",
+                  fgColor: { argb: "FFF2F2F2" },
+               };
+            }
+
+            // Center alignment for specific columns
+            row.getCell("no").alignment = { horizontal: "center" };
+            row.getCell("level").alignment = { horizontal: "center" };
+            row.getCell("rank").alignment = { horizontal: "center" };
+            row.getCell("year").alignment = { horizontal: "center" };
+            row.getCell("expired_on").alignment = { horizontal: "center" };
+            row.getCell("institution_type").alignment = { horizontal: "center" };
+            row.getCell("active").alignment = { horizontal: "center" };
+         });
+
+         // Add borders to all cells
+         worksheet.eachRow((row, rowNumber) => {
+            row.eachCell((cell) => {
+               cell.border = {
+                  top: { style: "thin" },
+                  left: { style: "thin" },
+                  bottom: { style: "thin" },
+                  right: { style: "thin" },
+               };
+            });
+         });
+
+         return workbook;
+      } catch (error) {
+         console.error("Failed to export accreditations to Excel:", error);
+         throw new Error("Failed to export accreditations to Excel");
+      }
+   }
 }
 
 module.exports = new ExcelService();

@@ -1,7 +1,8 @@
 const { Op } = require("sequelize");
-const { Accreditation, Log, Major, Faculty } = require("../models");
+const { Accreditation, Log, Major, Faculty, Institution } = require("../models");
 const fs = require("fs");
 const path = require("path");
+const excelService = require("../services/excel.service");
 
 module.exports = {
    getAllAccreditations: async (req, res) => {
@@ -349,6 +350,72 @@ module.exports = {
          res.status(204).send();
       } catch (error) {
          console.error("Error during delete accreditation:", error);
+         res.status(500).json({ message: "Internal server error" });
+      }
+   },
+
+   exportAccreditationsToExcel: async (req, res) => {
+      try {
+         // Fetch all accreditations with related data
+         const accreditations = await Accreditation.findAll({
+            attributes: [
+               "id",
+               "code",
+               "name",
+               "rank",
+               "year",
+               "expired_on",
+               "active",
+            ],
+            include: [
+               {
+                  model: Major,
+                  as: "major",
+                  attributes: ["id", "name", "level"],
+                  include: [
+                     {
+                        model: Faculty,
+                        as: "faculty",
+                        attributes: ["id", "name"],
+                     },
+                  ],
+               },
+               {
+                  model: Institution,
+                  as: "institution",
+                  attributes: ["id", "name", "type"],
+               },
+            ],
+            order: [["id", "ASC"]],
+         });
+
+         // Generate Excel workbook
+         const workbook = await excelService.exportAccreditationsToExcel(accreditations);
+
+         // Set response headers
+         const fileName = `Data_Akreditasi_${new Date().toISOString().split('T')[0]}.xlsx`;
+         res.setHeader(
+            "Content-Type",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+         );
+         res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
+
+         // Write workbook to response
+         await workbook.xlsx.write(res);
+
+         // Log the export action
+         await Log.create({
+            user_id: req.user.id,
+            action: "export-accreditations",
+            data: { username: req.user.username, fileName },
+            created_on: new Date(),
+            updated_on: new Date(),
+            active: true,
+         });
+
+         res.end();
+      } catch (error) {
+         console.error("Error exporting accreditations to Excel:", error);
          res.status(500).json({ message: "Internal server error" });
       }
    },

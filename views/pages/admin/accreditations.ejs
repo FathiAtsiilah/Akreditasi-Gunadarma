@@ -9,9 +9,14 @@
             <h2><i class="fas fa-certificate me-2"></i>Manajemen Akreditasi</h2>
             <p class="text-muted mb-0">Kelola data akreditasi</p>
         </div>
-        <button class="btn btn-primary" onclick="showAccreditationModal()">
-            <i class="fas fa-plus me-2"></i>Tambah Akreditasi
-        </button>
+        <div>
+            <button class="btn btn-success me-2" onclick="exportToExcel()">
+                <i class="fas fa-file-excel me-2"></i>Export Excel
+            </button>
+            <button class="btn btn-primary" onclick="showAccreditationModal()">
+                <i class="fas fa-plus me-2"></i>Tambah Akreditasi
+            </button>
+        </div>
     </div>
     <div class="card">
         <div class="card-header">
@@ -93,6 +98,9 @@
                                     <option value="Unggul">Unggul</option>
                                     <option value="Baik Sekali">Baik Sekali</option>
                                     <option value="Baik">Baik</option>
+                                    <option value="Terakreditasi">Terakreditasi</option>
+                                    <option value="Terakreditasi Sementara">Terakreditasi Sementara</option>
+                                    <option value="Tidak Terakreditasi">Tidak Terakreditasi</option>
                                 </select>
                             </div>
                         </div>
@@ -370,7 +378,7 @@
         }
     }
 
-    function addDocumentField(name = "", file = "") {
+    function addDocumentField(name = "", file = "", type = "") {
         documentIndex++;
         const container = document.getElementById("documentsContainer");
         const div = document.createElement("div");
@@ -385,11 +393,19 @@
                 </button>
             </div>
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label class="form-label">Nama Dokumen</label>
                     <input type="text" class="form-control document-name" value="${name}" required>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
+                    <label class="form-label">Tipe Dokumen</label>
+                    <select class="form-select document-type" required>
+                        <option value="">Pilih Tipe</option>
+                        <option value="Sertifikat">Sertifikat</option>
+                        <option value="SK">SK (Surat Keputusan)</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
                     <label class="form-label">File</label>
                     <input type="file" class="form-control document-file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
                     ${file ? `<small class="text-muted">File saat ini: ${file}</small>` : ""}
@@ -399,6 +415,14 @@
         `;
 
         container.appendChild(div);
+        
+        // Set the document type if provided
+        if (type) {
+            const typeSelect = div.querySelector('.document-type');
+            if (typeSelect) {
+                typeSelect.value = type;
+            }
+        }
     }
 
     function removeDocumentField(index) {
@@ -435,7 +459,7 @@
             console.log('Loading documents for edit:', accreditation.data); // Debug
             if (accreditation.data?.documents && Array.isArray(accreditation.data.documents)) {
                 accreditation.data.documents.forEach((doc) => {
-                    addDocumentField(doc.name, doc.file);
+                    addDocumentField(doc.name, doc.file, doc.type || "");
                 });
             }
         } else {
@@ -501,12 +525,14 @@
 
         documentItems.forEach((item, index) => {
             const nameInput = item.querySelector(".document-name");
+            const typeSelect = item.querySelector(".document-type");
             const fileInput = item.querySelector(".document-file");
             const currentFile = item.querySelector(".current-file").value;
 
-            if (nameInput.value.trim()) {
+            if (nameInput.value.trim() && typeSelect.value) {
                 const docData = {
                     name: nameInput.value.trim(),
+                    type: typeSelect.value,
                     file: currentFile,
                 };
 
@@ -613,9 +639,14 @@
             accreditation.data.documents.forEach((doc, index) => {
                 const div = document.createElement("div");
                 div.className = "d-flex justify-content-between align-items-center p-3 border rounded mb-2";
+                const docType = doc.type || 'Tidak ada tipe';
+                const badgeClass = doc.type === 'Sertifikat' ? 'bg-success' : 'bg-info';
                 div.innerHTML = `
                     <div>
-                        <h6 class="mb-1">${doc.name || 'Dokumen ' + (index + 1)}</h6>
+                        <h6 class="mb-1">
+                            ${doc.name || 'Dokumen ' + (index + 1)}
+                            <span class="badge ${badgeClass} ms-2">${docType}</span>
+                        </h6>
                         <small class="text-muted">${doc.file || 'No file'}</small>
                     </div>
                     <div>
@@ -635,6 +666,10 @@
         }
 
         modal.show();
+    }
+
+    function exportToExcel() {
+        window.location.href = '/api/accreditations/export/excel';
     }
 
     document.addEventListener("DOMContentLoaded", function () {

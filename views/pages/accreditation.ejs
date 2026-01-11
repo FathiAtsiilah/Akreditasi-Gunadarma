@@ -744,7 +744,8 @@
             const today = new Date();
             const isExpiringSoon = (expiredDate - today) / (1000 * 60 * 60 * 24) <= 180; // 6 months
             const data = item.data;
-            const documentsCount = data?.documents?.length || 0;
+            // Count only "Sertifikat" type documents for student view
+            const certificateCount = data?.documents?.filter(doc => doc.type === 'Sertifikat').length || 0;
             const date = new Date(item.year);
             const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
             html += `
@@ -764,8 +765,8 @@
                     <td><span class="badge ${item.institution.type === "Nasional" ? "bg-primary" : "bg-success"}">${
                 item.institution.type
             }</span></td>
-            <td><button class="btn btn-sm btn-outline-info" onclick="viewDocuments(${item.id})" title="Lihat Dokumen">
-                            <i class="fas fa-file-alt"></i> (${documentsCount})
+            <td><button class="btn btn-sm btn-outline-info" onclick="viewDocuments(${item.id})" title="Lihat Sertifikat">
+                            <i class="fas fa-certificate"></i> (${certificateCount})
                         </button></td>
                 </tr>
             `;
@@ -1177,25 +1178,35 @@
             
             console.log('Rendering documents:', accreditationData.documents); // Debug
             
-            accreditationData.documents.forEach((doc, index) => {
-                const div = document.createElement("div");
-                div.className = "d-flex justify-content-between align-items-center p-3 border rounded mb-2";
-                div.innerHTML = `
-                    <div>
-                        <h6 class="mb-1">${doc.name || 'Dokumen ' + (index + 1)}</h6>
-                        <small class="text-muted">${doc.file || 'No file'}</small>
-                    </div>
-                    <div>
-                        <a href="${doc.file}" target="_blank" class="btn btn-sm btn-outline-primary me-2" title="Lihat">
-                            <i class="fas fa-eye"></i>
-                        </a>
-                        <a href="${doc.file}" download class="btn btn-sm btn-outline-success" title="Download">
-                            <i class="fas fa-download"></i>
-                        </a>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
+            // Filter hanya dokumen tipe "Sertifikat" untuk tampilan mahasiswa
+            const certificateDocuments = accreditationData.documents.filter(doc => doc.type === 'Sertifikat');
+            
+            if (certificateDocuments.length > 0) {
+                certificateDocuments.forEach((doc, index) => {
+                    const div = document.createElement("div");
+                    div.className = "d-flex justify-content-between align-items-center p-3 border rounded mb-2";
+                    div.innerHTML = `
+                        <div>
+                            <h6 class="mb-1">
+                                ${doc.name || 'Sertifikat ' + (index + 1)}
+                                <span class="badge bg-success ms-2">Sertifikat</span>
+                            </h6>
+                            <small class="text-muted">${doc.file || 'No file'}</small>
+                        </div>
+                        <div>
+                            <a href="${doc.file}" target="_blank" class="btn btn-sm btn-outline-primary me-2" title="Lihat">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="${doc.file}" download class="btn btn-sm btn-outline-success" title="Download">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            } else {
+                container.innerHTML = '<div class="text-center text-muted p-4">Tidak ada sertifikat akreditasi</div>';
+            }
         } else {
             console.log('No documents found or invalid structure'); // Debug
             container.innerHTML = '<div class="text-center text-muted p-4">Tidak ada dokumen</div>';
